@@ -31,6 +31,24 @@ Never hand-edit `tokens.json` or a `preview.html`; the next `make build` overwri
 4. If you change the React adapter, run `python3 tools/react_contracts.py` (16 checks; it skips when `.ds-sync/node_modules` is missing).
 5. Look at the screenshots (`make shots`) in all six themes for anything you touched.
 6. If the change affects how the system meets an Apple recommendation, update `design-system/5-apple-alignment.md` (status and evidence). Claim only what a check proves. Device and assistive-technology checks are still pending, so say so where a claim depends on them.
+7. If the change cites Apple guidance, or touches a component that the guidance covers, do the HIG change log check below first.
+
+## Check Apple's latest guidance
+
+Apple changes the Human Interface Guidelines (HIG) during the year, not only at WWDC. A rule here can go out of date without any change in this repo. Do this check:
+
+- before a change that cites Apple, or that changes how a component behaves where the HIG has a page for it (scroll views, menus, toolbars, tab bars, sheets, materials);
+- after each WWDC (June) and each Apple OS release (September), even if nothing else changes.
+
+Steps:
+
+1. Open the HIG change log: https://developer.apple.com/design/whats-new/
+2. Find the entries dated after the last row of the "Apple guidance review log" in `design-system/5-apple-alignment.md`.
+3. For each entry that touches this system, read the HIG page itself. News articles and blog posts are leads only, never evidence.
+4. Decide one of: change the system, no change needed, or not applicable to the web. The HIG is written for native apps, so translate the goal, not the API.
+5. Add one row to the review log: the date you checked, the page, Apple's update date, what Apple says, and the decision with its commit or reason.
+
+Summarize Apple's text in your own words and link to the page. Do not copy HIG text into this repo.
 
 ## Rules that are easy to break
 

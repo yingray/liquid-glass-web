@@ -20,6 +20,16 @@ This section goes through each recommendation in Apple's developer article "Adop
 - **Behaviour contracts** (since v3.3): 99 tests in headless Chromium, each tagged with an item of the UI/UX audit (UI-xx) or a topic (SCROLL: inner scroll areas): keyboard, cancel, disabled items, dynamic items, the overlay stack, lifecycle, hit areas and layout geometry, including AppShell from 320 to 1920 wide and in landscape.
 - **Not verified**: not tested on physical iPhone or Android phones; not tested with VoiceOver, NVDA or TalkBack; actual frame rates not measured. Claims about keyboard and screen-reader behaviour below are automated in headless Chromium; device and assistive-technology checks are pending. Related items in the tables are marked "Partial" where the gap is the whole item.
 
+## Apple guidance review log
+
+Each row records one check of Apple's HIG change log (https://developer.apple.com/design/whats-new/). See "Check Apple's latest guidance" in `CONTRIBUTING.md` for the steps. The next check starts from the date of the last row.
+
+| Checked | Apple page | Apple update | What Apple says (summary) | Decision |
+| --- | --- | --- | --- | --- |
+| 2026-10-24 | HIG: Scroll views | 2025-07-28 (scroll edge effects); 2026-03-24 (visionOS only) | Show that content continues, because indicators are not always visible. Prefer the automatic, more opaque edge style. Use an edge effect only under floating controls. One edge effect per view | Changed: thin scrollbars in inner areas, the dock shows part of the next tile, no edge effect without floating controls (`c31c566`) |
+| 2026-10-24 | WWDC26 / iOS 27 (news reports, not on Apple's pages yet) | June 2026 | Reports say the default scroll edge is now harder with a line at the bottom, and a system slider sets the glass transparency | No change. Our scroll edge is already opaque. A web page cannot read the slider; `prefers-reduced-transparency` maps to the Solid themes. Open: a 1px line under the scroll edge |
+| 2026-10-24 | HIG: Menus (checked during the UI/UX audit) | Not recorded | Use icons with purpose; leave them out when no clear icon fits | Changed: menu icons are optional but consistent inside a group (`menuIconsMixed`, UI-47) |
+
 ## Visual refresh
 
 | # | Apple recommendation | Status | How the system handles it |
