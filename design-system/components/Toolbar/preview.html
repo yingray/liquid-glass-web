@@ -1,0 +1,100 @@
+<!-- @dsCard group="Navigation" height=1040 width=1040 subtitle="Grouped glass toolbars and the composer" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Toolbar — preview</title>
+<style>
+  html, body { margin: 0; }
+  body { background: var(--canvas); }
+  .d { box-sizing: border-box; padding: 24px; display: grid; gap: 32px; }
+  .d-h { margin: 0 0 12px; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .d-frame { position: relative; overflow: hidden; isolation: isolate; border-radius: 20px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .d-cap { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-page { position: absolute; inset: 0; overflow: hidden; }
+  .d-card { border-radius: 18px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+
+  .tb-stage { height: 300px; }
+  .tb-stage .lg-stage__bottom { bottom: 18px; }
+  .tb-review { height: 150px; }
+  .tb-review .lg-stage__bottom { bottom: 16px; }
+  .tb-canvas { padding: 24px; display: grid; gap: 18px; justify-items: center; }
+  .tb-wrong { display: flex; gap: 20px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .tb-wrong figure { margin: 0; display: grid; gap: 8px; justify-items: center; }
+  .tb-wrong .one { display: inline-flex; align-items: center; gap: 4px; height: 48px; padding: 0 6px; border-radius: 999px; }
+</style>
+</head>
+<body>
+<main class="d lg-root">
+<section>
+  <h2 class="d-h">Toolbar on the stage: one glass background per group (play + timecode | note + share), the primary action “Review” stands alone; it must sit in the stage’s bottom scrim band</h2>
+  <div class="lg-stage tb-stage" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></div>
+    <div class="lg-stage__top"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip"><span class="lg-dot lg-dot--accent"></span>Frame 14 · Undecided</span></div>
+    <div class="lg-stage__bottom"><div class="lg-toolbar" role="toolbar" aria-label="Play" data-lg="toolbar">
+  <div class="lg-toolbar__group lg-toolbar__group--readout lg-glass lg-glass--media lg-glass--elevated">
+    <button class="lg-btn lg-btn--media-solid lg-btn--icon" type="button" aria-label="Play (Space)" title="Play (Space)"><svg class="lg-icon" style="width:12px;height:12px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 2.8v10.4L13 8z" fill="currentColor" stroke="none"/></svg></button>
+    <span class="lg-toolbar__text">0:13<small> / 0:47</small></span>
+  </div>
+  <button class="lg-btn lg-btn--accent" type="button">Review 4 Candidates</button>
+  <div class="lg-toolbar__group lg-glass lg-glass--media lg-glass--elevated">
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Add Note" title="Add Note (P)" aria-pressed="false"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 14.5s4.5-4.2 4.5-8a4.5 4.5 0 0 0-9 0c0 3.8 4.5 8 4.5 8z"/><circle cx="8" cy="6.5" r="1.5"/></svg></button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Share" title="Share"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M5 4.8 8 2l3 2.8M3.5 8v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V8"/></svg></button>
+  </div>
+</div></div>
+  </div>
+</section>
+<section>
+  <h2 class="d-h">For review: playback and timeline in one group, zoom in another. Shortcuts live in title and aria-label, not in the toolbar</h2>
+  <div class="lg-stage tb-review" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 58% 40%, hsl(200 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 71% 74%, hsl(240 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 67% 20%, hsl(40 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(200 35% 26%) 0%, hsl(240 30% 9%) 100%)"></div><div class="lg-stage__bottom"><div class="lg-toolbar" role="toolbar" aria-label="Compare playback" data-lg="toolbar">
+  <div class="lg-toolbar__group lg-toolbar__group--readout lg-glass lg-glass--media lg-glass--elevated">
+    <button class="lg-btn lg-btn--media-solid lg-btn--icon" type="button" aria-label="Pause (Space)" title="Pause (Space)"><svg class="lg-icon" style="width:12px;height:12px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" stroke="none"/></svg></button>
+    <span class="lg-toolbar__text">0:01 / 0:05</span>
+    <span class="lg-scrub" style="--lg-value:22%"><span><span></span></span></span>
+  </div>
+  <div class="lg-toolbar__group lg-glass lg-glass--media lg-glass--elevated"><div class="lg-segmented lg-segmented--media lg-segmented--sm" role="radiogroup" aria-label="Zoom" data-lg="segmented"><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Fit</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">2×</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">4×</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div></div>
+</div></div></div>
+</section>
+<section class="d-frame tb-canvas">
+  <h2 class="d-h" style="margin:0">On canvas: Undo + Redo, view (“Compare” on, “Adjust” disabled), Share + More — three groups, one glass background each</h2>
+  <div class="lg-toolbar" role="toolbar" aria-label="Edit" data-lg="toolbar">
+  <div class="lg-toolbar__group lg-glass">
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Undo" title="Undo (⌘Z)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.5 6.5h7a4 4 0 0 1 0 8h-2"/></svg></button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Redo" title="Redo (⇧⌘Z)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 3.5l3 3-3 3"/><path d="M13.5 6.5h-7a4 4 0 0 0 0 8h2"/></svg></button>
+  </div>
+  <div class="lg-toolbar__group lg-glass">
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Compare" aria-pressed="true"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="2"/><path d="M8 3v10"/></svg></button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Grid" aria-pressed="false"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg></button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Adjust" disabled><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h6M11.5 5h2M2.5 11h2M7.5 11h6"/><circle cx="10" cy="5" r="1.5"/><circle cx="6" cy="11" r="1.5"/></svg></button>
+  </div>
+  <div class="lg-toolbar__group lg-glass">
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Share"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M5 4.8 8 2l3 2.8M3.5 8v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V8"/></svg></button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="More"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="3" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="13" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg></button>
+  </div>
+</div>
+  <div class="tb-wrong">
+  <figure><div class="one lg-glass"><button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Undo"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 3.5 2.5 6.5l3 3"/><path d="M2.5 6.5h7a4 4 0 0 1 0 8h-2"/></svg></button><button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Redo"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 3.5l3 3-3 3"/><path d="M13.5 6.5h-7a4 4 0 0 0 0 8h2"/></svg></button><button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Annotate"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 14.5s4.5-4.2 4.5-8a4.5 4.5 0 0 0-9 0c0 3.8 4.5 8 4.5 8z"/><circle cx="8" cy="6.5" r="1.5"/></svg></button><button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="More"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="3" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="13" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg></button></div><figcaption class="d-cap"><span class="lg-badge" style="background:var(--danger-fill);color:var(--on-danger)">Don’t</span> Unrelated actions on one background</figcaption></figure>
+  <figure><div class="one lg-glass"><button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Share"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M5 4.8 8 2l3 2.8M3.5 8v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V8"/></svg></button><button class="lg-btn lg-btn--plain" type="button">Redo All</button></div><figcaption class="d-cap"><span class="lg-badge" style="background:var(--danger-fill);color:var(--on-danger)">Don’t</span> Icons and text mixed on one background</figcaption></figure>
+</div>
+  <h2 class="d-h" style="margin:6px 0 0">Composer: “Send” is disabled while empty and enabled once there is text</h2>
+  <form class="lg-composer lg-glass" onsubmit="event.preventDefault()" role="search" aria-label="Instructions for the assistant">
+  <span class="lg-dot lg-dot--lg lg-dot--accent" aria-hidden="true"></span>
+  <span class="lg-badge lg-badge--mono" style="height:24px">@all</span>
+  <input class="lg-composer__input" type="text" placeholder="Tell the assistant how to adjust these photos…" aria-label="Instructions for the assistant">
+  <span class="lg-composer__hint" aria-hidden="true">⌘K</span>
+  <button class="lg-btn lg-btn--accent" type="submit" disabled>Send</button>
+</form>
+  <form class="lg-composer lg-glass" onsubmit="event.preventDefault()" role="search" aria-label="Instructions for the assistant">
+  <span class="lg-dot lg-dot--lg lg-dot--accent" aria-hidden="true"></span>
+  <span class="lg-badge lg-badge--mono" style="height:24px">@12–18</span>
+  <input class="lg-composer__input" type="text" placeholder="Tell the assistant how to adjust these photos…" aria-label="Instructions for the assistant" value="Match the white balance of Frames 12–18 to dusk">
+  <span class="lg-composer__hint" aria-hidden="true">⌘K</span>
+  <button class="lg-btn lg-btn--accent" type="submit">Send</button>
+</form>
+</section>
+</main>
+<script>
+LiquidGlass.init(document);
+</script>
+</body>
+</html>

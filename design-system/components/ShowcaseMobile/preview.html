@@ -1,0 +1,267 @@
+<!-- @dsCard group="Showcase" height=950 width=1330 page subtitle="390: tab bar, grouped stage toolbar, half-height sheet, inline confirmation" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ShowcaseMobile — preview</title>
+<style>
+  html, body { margin: 0; }
+  body { background: var(--canvas); }
+  .d { box-sizing: border-box; padding: 24px; display: grid; gap: 32px; }
+  .d-h { margin: 0 0 12px; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .d-frame { position: relative; overflow: hidden; isolation: isolate; border-radius: 20px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .d-cap { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-page { position: absolute; inset: 0; overflow: hidden; }
+  .d-card { border-radius: 18px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+
+  
+  .sc { position: relative; width: 1440px; height: 900px; display: flex; overflow: hidden; background: var(--canvas); }
+  .sc-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; padding: 68px 0 12px 10px; }
+  .sc-stage { flex: 1; min-height: 0; }
+  .sc-stage .lg-stage__bottom { bottom: 18px; }
+  .sc-pin { position: absolute; left: 46%; top: 44%; display: flex; gap: 6px; align-items: flex-start; transform: translate(-2px, -28px); }
+  .sc-pin .lg-plate { max-width: 230px; padding: 6px 11px; border-radius: 12px; font-size: 12.5px; line-height: 17px; }
+  .sc-pin .lg-plate i { display: block; font-style: normal; font-size: 11px; color: var(--ink-on-media-muted); }
+  .sc-dock { flex: none; padding: 10px 14px 12px; border-radius: 24px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+  .sc-dock__head { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--ink-muted); }
+  .sc-dock__head b { color: var(--ink); font-size: 13px; font-weight: 600; }
+  .sc-strip { display: flex; gap: 3px; height: 62px; }
+  .sc-clip { position: relative; flex: 5 1 0; min-width: 0; padding: 0; border: 0; border-radius: 10px; cursor: pointer; background-size: 130% 130%; background-position: 50% 50%; }
+  .sc-clip.is-selected { outline: 2px solid var(--ink); outline-offset: -2px; }
+  .sc-clip__id { position: absolute; left: 5px; bottom: 5px; padding: 1px 7px; border-radius: 7px; background: rgba(0,0,0,.55); color: #fff; font: 600 11px/16px var(--font-mono); }
+  .sc-clip .lg-dot { position: absolute; right: 6px; top: 6px; width: 8px; height: 8px; }
+  .sc-bottom { flex: none; display: flex; justify-content: center; }
+  .sc-aside { flex: none; width: 348px; padding: 68px 12px 12px 10px; display: flex; }
+  .sc-aside .lg-panel { flex: 1; }
+
+  .pn-wrap { display: grid; grid-template-columns: 348px 1fr; gap: 28px; align-items: start; }
+  .pn-aside { height: 860px; }
+  .pn-side { display: grid; gap: 24px; align-content: start; }
+  .pn-stack { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .pn-act { display: flex; gap: 10px; padding: 2px 4px; font-size: 12.5px; line-height: 18px; }
+  .pn-act time { flex: none; width: 34px; color: var(--ink-muted); font: 11.5px/18px var(--font-mono); }
+  .pn-act span { color: var(--ink-muted); }
+  .pn-act b { color: var(--ink); font-weight: 600; }
+  .pn-work { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border-radius: 14px; background: var(--fill); }
+  .pn-work div { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
+  .pn-work div span { flex: 1; min-width: 0; text-align: right; color: var(--ink-muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  
+  .sm { display: flex; gap: 32px; padding: 24px; align-items: flex-start; }
+  .sm figure { margin: 0; display: grid; gap: 10px; }
+  .sm figcaption { color: var(--ink-muted); font-size: 12px; line-height: 16px; max-width: 390px; }
+  .ph { position: relative; overflow: hidden; isolation: isolate; width: 390px; height: 844px; border-radius: 48px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .ph-main { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; padding: 60px 8px 72px; }
+  .ph-stage { flex: 1; min-height: 0; border-radius: 28px; }
+  .ph-stage .lg-stage__bottom { left: 8px; right: 8px; bottom: 12px; }
+  .ph-stage .lg-toolbar { width: 100%; justify-content: space-between; }
+  .ph-stage .lg-toolbar__group { flex: none; }
+  .ph-more { position: absolute; right: 12px; top: 12px; z-index: 3; }
+  .ph-strip { display: flex; gap: 3px; height: 54px; padding: 8px; border-radius: 22px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+  .ph-strip .sc-clip { flex: 1 1 0; }
+  .ph .lg-composer { width: 100%; }
+  .ph .lg-composer .lg-composer__hint { display: none; }
+  .ph-scrim { position: absolute; inset: 0; background: var(--scrim); z-index: 50; }
+  .ph-sheet { position: absolute; left: 8px; right: 8px; bottom: 8px; z-index: 51; }
+  .ph-sheet .lg-modal { width: 100%; max-height: 560px; }
+  .ph-menu { position: absolute; right: 14px; top: 122px; z-index: 52; }
+  .ph-menu .lg-menu { width: 300px; }
+</style>
+</head>
+<body>
+<main class="sm lg-root">
+<figure><figcaption>① Viewing: only brand and menu at the top; the frame-switching controls share one glass group and “Use” stands alone; the composer is the bottom field, so the tab bar drops its search button</figcaption><div class="ph">
+  <div class="ph-main">
+    <div class="lg-stage ph-stage" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></div>
+      <div class="lg-stage__top" style="left:12px;top:12px;right:60px"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip"><span class="lg-dot lg-dot--accent"></span>Frame 14 · Pick #2</span></div>
+      <button class="lg-btn lg-glass lg-glass--media lg-glass--chip lg-btn--icon ph-more" type="button" aria-label="More actions for Frame 14" aria-expanded="false"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="3" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="13" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg></button>
+      <div class="lg-stage__bottom"><div class="lg-toolbar" role="toolbar" aria-label="View" data-lg="toolbar">
+  <div class="lg-toolbar__group lg-glass lg-glass--media lg-glass--elevated">
+    <button class="lg-btn lg-btn--media lg-btn--icon" type="button" aria-label="Previous"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
+    <span class="lg-toolbar__text">14<small> / 48</small></span>
+    <button class="lg-btn lg-btn--media lg-btn--icon" type="button" aria-label="Next"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
+  </div>
+  <button class="lg-btn lg-btn--accent" type="button">Use #2</button>
+</div></div>
+    </div>
+    <div class="ph-strip"><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)" aria-label="Frame 11"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)" aria-label="Frame 12"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)" aria-label="Frame 13"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button><button class="sc-clip is-selected" type="button" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)" aria-label="Frame 14"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)" aria-label="Frame 15"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)" aria-label="Frame 16"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button></div>
+    <form class="lg-composer lg-glass lg-glass--flat" onsubmit="event.preventDefault()" role="search" aria-label="Instructions for the assistant">
+  <span class="lg-dot lg-dot--lg lg-dot--accent" aria-hidden="true"></span>
+  <span class="lg-badge lg-badge--mono" style="height:24px">@all</span>
+  <input class="lg-composer__input" type="text" placeholder="Ask the assistant…" aria-label="Instructions for the assistant">
+  <span class="lg-composer__hint" aria-hidden="true">⌘K</span>
+  <button class="lg-btn lg-btn--accent" type="submit" disabled>Send</button>
+</form>
+  </div>
+  <header class="lg-navbar lg-navbar--contained" data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="ph-menu-3"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="ph-menu-3" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header>
+  <nav class="lg-tabbar lg-tabbar--contained" aria-label="Main tabs" data-lg="tabbar" data-minimize="scroll-down">
+  <div class="lg-scroll-edge lg-scroll-edge--bottom" aria-hidden="true"></div>
+  <div class="lg-tabbar__tabs lg-glass"><a class="lg-tabbar__tab" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg><span>Studio</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h3l1.5 1.5H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg><span>Library</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg><span>Shows</span></a></div>
+</nav>
+  
+</div></figure>
+<figure><figcaption>② The inspector becomes a half-height sheet: thick glass, inset from the edges, with the stage showing beneath</figcaption><div class="ph">
+  <div class="ph-main">
+    <div class="lg-stage ph-stage" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)"></div>
+      <div class="lg-stage__top" style="left:12px;top:12px;right:60px"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip"><span class="lg-dot lg-dot--accent"></span>Frame 14 · Pick #2</span></div>
+      <button class="lg-btn lg-glass lg-glass--media lg-glass--chip lg-btn--icon ph-more" type="button" aria-label="More actions for Frame 14" aria-expanded="false"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="3" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="13" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg></button>
+      <div class="lg-stage__bottom"><div class="lg-toolbar" role="toolbar" aria-label="View" data-lg="toolbar">
+  <div class="lg-toolbar__group lg-glass lg-glass--media lg-glass--elevated">
+    <button class="lg-btn lg-btn--media lg-btn--icon" type="button" aria-label="Previous"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
+    <span class="lg-toolbar__text">14<small> / 48</small></span>
+    <button class="lg-btn lg-btn--media lg-btn--icon" type="button" aria-label="Next"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
+  </div>
+  <button class="lg-btn lg-btn--accent" type="button">Use #2</button>
+</div></div>
+    </div>
+    <div class="ph-strip"><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)" aria-label="Frame 11"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)" aria-label="Frame 12"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)" aria-label="Frame 13"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button><button class="sc-clip is-selected" type="button" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)" aria-label="Frame 14"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)" aria-label="Frame 15"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)" aria-label="Frame 16"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button></div>
+    <form class="lg-composer lg-glass lg-glass--flat" onsubmit="event.preventDefault()" role="search" aria-label="Instructions for the assistant">
+  <span class="lg-dot lg-dot--lg lg-dot--accent" aria-hidden="true"></span>
+  <span class="lg-badge lg-badge--mono" style="height:24px">@all</span>
+  <input class="lg-composer__input" type="text" placeholder="Ask the assistant…" aria-label="Instructions for the assistant">
+  <span class="lg-composer__hint" aria-hidden="true">⌘K</span>
+  <button class="lg-btn lg-btn--accent" type="submit" disabled>Send</button>
+</form>
+  </div>
+  <header class="lg-navbar lg-navbar--contained" data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="ph-menu-5"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="ph-menu-5" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header>
+  <nav class="lg-tabbar lg-tabbar--contained" aria-label="Main tabs" data-lg="tabbar" data-minimize="scroll-down">
+  <div class="lg-scroll-edge lg-scroll-edge--bottom" aria-hidden="true"></div>
+  <div class="lg-tabbar__tabs lg-glass"><a class="lg-tabbar__tab" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg><span>Studio</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h3l1.5 1.5H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg><span>Library</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg><span>Shows</span></a></div>
+</nav>
+  <div class="ph-scrim"></div><div class="ph-sheet"><div class="lg-modal lg-modal--static" role="dialog" aria-labelledby="ph-st">
+  <span class="lg-modal__grabber" aria-hidden="true"></span>
+  <div class="lg-modal__header"><h2 class="lg-modal__title title-3" id="ph-st">Needs Your Decision</h2><button class="lg-btn lg-btn--tinted lg-btn--icon lg-btn--sm" type="button" aria-label="Close"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button></div>
+  <div class="lg-modal__body"><button class="lg-row" type="button"><span class="lg-row__thumb" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></span><span class="lg-row__text"><span class="lg-row__title"><span>Frame 14 · Forest</span></span><span class="lg-row__sub">4 versions · Pick #2</span></span><svg class="lg-row__chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button><button class="lg-row" type="button"><span class="lg-row__thumb" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></span><span class="lg-row__text"><span class="lg-row__title"><span>Frame 17 · Harbor</span></span><span class="lg-row__sub">3 versions · Pick #1</span></span><svg class="lg-row__chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button><button class="lg-row" type="button"><span class="lg-row__thumb" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></span><span class="lg-row__text"><span class="lg-row__title"><span>Frame 21 · After Rain</span></span><span class="lg-row__sub">4 versions · Pick #2</span></span><svg class="lg-row__chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
+    <div class="lg-callout lg-callout--warn" style="margin-top:8px"><span class="lg-callout__eyebrow">Frame 9 · Curator Question</span><p>Portrait only, but the wall needs landscape. Crop it, or use another?</p><div class="lg-callout__actions"><button class="lg-btn lg-btn--inverse lg-btn--sm" type="button">Crop to Landscape</button><button class="lg-btn lg-btn--tinted lg-btn--sm" type="button">Use Frame 10</button></div></div>
+  </div>
+</div></div>
+</div></figure>
+<figure><figcaption>③ The menu grows out of the “More” button at the stage’s top right and confirms inline; the rest of the stage stays usable</figcaption><div class="ph">
+  <div class="ph-main">
+    <div class="lg-stage ph-stage" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 58% 40%, hsl(200 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 71% 74%, hsl(240 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 67% 20%, hsl(40 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(200 35% 26%) 0%, hsl(240 30% 9%) 100%)"></div>
+      <div class="lg-stage__top" style="left:12px;top:12px;right:60px"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip"><span class="lg-dot lg-dot--accent"></span>Frame 14 · Pick #2</span></div>
+      <button class="lg-btn lg-glass lg-glass--media lg-glass--chip lg-btn--icon ph-more" type="button" aria-label="More actions for Frame 14" aria-expanded="true" aria-controls="ph-mc"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="3" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="13" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg></button>
+      <div class="lg-stage__bottom"><div class="lg-toolbar" role="toolbar" aria-label="View" data-lg="toolbar">
+  <div class="lg-toolbar__group lg-glass lg-glass--media lg-glass--elevated">
+    <button class="lg-btn lg-btn--media lg-btn--icon" type="button" aria-label="Previous"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
+    <span class="lg-toolbar__text">14<small> / 48</small></span>
+    <button class="lg-btn lg-btn--media lg-btn--icon" type="button" aria-label="Next"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
+  </div>
+  <button class="lg-btn lg-btn--accent" type="button">Use #2</button>
+</div></div>
+    </div>
+    <div class="ph-strip"><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)" aria-label="Frame 11"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)" aria-label="Frame 12"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)" aria-label="Frame 13"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button><button class="sc-clip is-selected" type="button" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)" aria-label="Frame 14"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)" aria-label="Frame 15"><span class="lg-dot lg-dot--ring lg-dot--ok"></span></button><button class="sc-clip" type="button" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)" aria-label="Frame 16"><span class="lg-dot lg-dot--ring lg-dot--accent"></span></button></div>
+    <form class="lg-composer lg-glass lg-glass--flat" onsubmit="event.preventDefault()" role="search" aria-label="Instructions for the assistant">
+  <span class="lg-dot lg-dot--lg lg-dot--accent" aria-hidden="true"></span>
+  <span class="lg-badge lg-badge--mono" style="height:24px">@all</span>
+  <input class="lg-composer__input" type="text" placeholder="Ask the assistant…" aria-label="Instructions for the assistant">
+  <span class="lg-composer__hint" aria-hidden="true">⌘K</span>
+  <button class="lg-btn lg-btn--accent" type="submit" disabled>Send</button>
+</form>
+  </div>
+  <header class="lg-navbar lg-navbar--contained" data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="ph-menu-8"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="ph-menu-8" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header>
+  <nav class="lg-tabbar lg-tabbar--contained" aria-label="Main tabs" data-lg="tabbar" data-minimize="scroll-down">
+  <div class="lg-scroll-edge lg-scroll-edge--bottom" aria-hidden="true"></div>
+  <div class="lg-tabbar__tabs lg-glass"><a class="lg-tabbar__tab" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg><span>Studio</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h3l1.5 1.5H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg><span>Library</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg><span>Shows</span></a></div>
+</nav>
+  <div class="ph-menu"><div class="lg-menu lg-glass lg-glass--popover" role="dialog" aria-labelledby="ph-mc-t" id="ph-mc">
+  <div class="lg-menu__confirm">
+    <b id="ph-mc-t">Remove Frame 14 from the show?</b>
+    <p>It’s in the layout of 2 walls. If you remove it, the assistant will rearrange both walls with Frame 15.</p>
+    <div><button class="lg-btn lg-btn--tinted" type="button" style="--lg-h:34px">Cancel</button><button class="lg-btn lg-btn--danger" type="button" style="--lg-h:34px">Remove</button></div>
+  </div>
+</div></div>
+</div></figure>
+</main>
+<script>
+LiquidGlass.init(document);
+</script>
+</body>
+</html>

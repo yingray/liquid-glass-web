@@ -1,0 +1,93 @@
+<!-- @dsCard group="Showcase" height=1630 width=1240 page subtitle="Scroll edge, thick glass, stage scrims, background extension, strength and fallbacks" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Materials — preview</title>
+<style>
+  html, body { margin: 0; }
+  body { background: var(--canvas); }
+  .d { box-sizing: border-box; padding: 24px; display: grid; gap: 32px; }
+  .d-h { margin: 0 0 12px; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .d-frame { position: relative; overflow: hidden; isolation: isolate; border-radius: 20px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .d-cap { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-page { position: absolute; inset: 0; overflow: hidden; }
+  .d-card { border-radius: 18px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+
+  .mt-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .mt-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .mt-box { height: 190px; }
+  .mt-tag { position: absolute; right: 12px; bottom: 12px; z-index: 50; }
+  .mt-chiprow { position: absolute; left: 16px; right: 16px; top: 16px; display: flex; gap: 6px; }
+  .mt-media { height: 190px; border-radius: 20px; }
+  .mt-island { position: absolute; left: 20px; top: 14px; height: 42px; padding: 0 16px; display: flex; align-items: center; gap: 10px; border-radius: 999px; font-size: 13px; line-height: 18px; z-index: 40; }
+  .mt-island .lg-muted { white-space: nowrap; }
+  .nv-cards { position: absolute; left: 20px; right: 20px; top: 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .nv-card { display: grid; gap: 4px; font-size: 13px; line-height: 18px; }
+  .nv-card b { font-weight: 600; } .nv-card span { color: var(--ink-muted); font-size: 12px; }
+  .nv-thumb { aspect-ratio: 16 / 10; border-radius: 18px; }
+  .mt-ladder { height: 160px; border-radius: 20px; display: grid; place-items: center; }
+  .mt-ladder .lg-glass { height: 42px; padding: 0 18px; display: flex; align-items: center; border-radius: 999px; font: 600 13px/18px var(--font-sans); }
+  .lg-glass.mt-opaque { background-color: var(--surface); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .mt-menuover { height: 230px; }
+  .mt-menuover .lg-menu { position: absolute; left: 24px; top: 24px; z-index: 5; }
+  .mt-white { position: absolute; inset: 0; background: linear-gradient(90deg, #ffffff 0 50%, #0a0a0c 50% 100%); }
+  .mt-ext { position: relative; height: 300px; border-radius: 20px; overflow: hidden; isolation: isolate; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .mt-ext .mt-hero { position: absolute; left: 240px; right: 0; top: 0; bottom: 0; background-size: cover; background-position: 0% 50%; }
+  .mt-ext .lg-extend { right: auto; width: 240px; }
+  .mt-ext .lg-panel { position: absolute; left: 10px; top: 10px; bottom: 10px; width: 220px; z-index: 2; gap: 4px; }
+  .mt-ext .lg-menu__item { min-height: 36px; }
+</style>
+</head>
+<body>
+<main class="d lg-root">
+<section>
+  <h2 class="d-h">1 · Content scrolling under glass: left, no scroll edge, so secondary text on the island is lost over bright thumbnails; right, with lg-scroll-edge, still ≥ 4.5:1 in the worst case</h2>
+  <div class="mt-2">
+    <div class="d-frame mt-box"><div class="nv-cards"><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></div><b>Frame 11</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></div><b>Frame 12</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><b>Frame 13</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></div><b>Frame 14</b><span>Forest · 2026.03</span></div></div><div class="mt-island lg-glass"><b>Island Light</b><span class="lg-muted">Picks · 18 / 48 selected</span></div><span class="lg-badge mt-tag" style="background:var(--danger-fill);color:var(--on-danger)">Don’t</span></div>
+    <div class="d-frame mt-box" data-scrolled><div class="nv-cards"><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></div><b>Frame 11</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></div><b>Frame 12</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><b>Frame 13</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></div><b>Frame 14</b><span>Forest · 2026.03</span></div></div><div class="lg-scroll-edge lg-scroll-edge--contained" data-on></div><div class="mt-island lg-glass"><b>Island Light</b><span class="lg-muted">Picks · 18 / 48 selected</span></div><span class="lg-badge lg-badge--ok mt-tag">Do</span></div>
+  </div>
+</section>
+<section>
+  <h2 class="d-h">2 · A menu over arbitrary content: left, regular glass (0.5), nearly unreadable over white; right, thick glass (glass-thick), ≥ 4.5:1 over white and black</h2>
+  <div class="mt-2">
+    <div class="d-frame mt-menuover"><div class="mt-white"></div><div class="lg-menu lg-menu--sm lg-glass" style="--lg-shadow:var(--specular),var(--elevation-menu);background-color:var(--glass)"><span class="lg-menu__label">Frame 14</span><button class="lg-menu__item" type="button"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9"/></svg>View Larger</button><button class="lg-menu__item lg-menu__item--danger" type="button"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>Remove from Show</button></div><span class="lg-badge mt-tag" style="background:var(--danger-fill);color:var(--on-danger)">Don’t</span></div>
+    <div class="d-frame mt-menuover"><div class="mt-white"></div><div class="lg-menu lg-menu--sm lg-glass lg-glass--popover"><span class="lg-menu__label">Frame 14</span><button class="lg-menu__item" type="button"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 2.5h4v4M6.5 13.5h-4v-4M13.5 2.5 9 7M2.5 13.5 7 9"/></svg>View Larger</button><button class="lg-menu__item lg-menu__item--danger" type="button"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>Remove from Show</button></div><span class="lg-badge lg-badge--ok mt-tag">Do</span></div>
+  </div>
+</section>
+<section>
+  <h2 class="d-h">3 · Glass on the stage: left, scrims off (lg-stage--no-scrim); right, the default top and bottom scrim bands (full strength over the top 64px and bottom 88px). Labels sit inside the bands; captions mid-frame use lg-plate</h2>
+  <div class="mt-2">
+    <div class="lg-stage lg-stage--no-scrim mt-media" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(40% 60% at 70% 70%, hsl(28 70% 60% / .8) 0%, transparent 70%), linear-gradient(180deg, #fbf8f2 0%, #efe9df 45%, #b9ad9c 80%, #6d6257 100%)"></div><div class="mt-chiprow"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip">Frame 14</span><span class="lg-badge lg-glass lg-glass--media lg-glass--chip" style="font-weight:400;color:var(--ink-on-media-muted)">Forest · Undecided</span></div><span class="lg-badge mt-tag" style="background:var(--danger-fill);color:var(--on-danger)">Don’t</span></div>
+    <div class="lg-stage mt-media" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(40% 60% at 70% 70%, hsl(28 70% 60% / .8) 0%, transparent 70%), linear-gradient(180deg, #fbf8f2 0%, #efe9df 45%, #b9ad9c 80%, #6d6257 100%)"></div><div class="mt-chiprow"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip">Frame 14</span><span class="lg-badge lg-glass lg-glass--media lg-glass--chip" style="font-weight:400;color:var(--ink-on-media-muted)">Forest · Undecided</span></div><span class="lg-badge lg-plate" style="position:absolute;left:44%;top:46%">Don’t brighten the sky further</span><span class="lg-badge lg-badge--ok mt-tag">Do</span></div>
+  </div>
+</section>
+<section>
+  <h2 class="d-h">4 · Background extension: left, the sidebar floats over empty canvas; right, lg-extend mirrors and blurs the adjacent hero image beneath the sidebar, which uses thick glass</h2>
+  <div class="mt-2">
+    <div class="mt-ext"><div class="mt-hero" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><nav class="lg-panel lg-glass lg-glass--thick" aria-label="Site"><a class="lg-menu__item" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5 8 3l5.5 4.5V13a.5.5 0 0 1-.5.5H10V10H6v3.5H3a.5.5 0 0 1-.5-.5z"/></svg>Overview</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="2"/><circle cx="6" cy="6.5" r="1.2"/><path d="M2.5 11.5 6 8.5l3 2.5 2-1.5 2.5 2"/></svg>Work</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg>Shows</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a></nav><span class="lg-badge mt-tag" style="background:var(--danger-fill);color:var(--on-danger)">Don’t</span></div>
+    <div class="mt-ext"><div class="lg-extend" style="--lg-extend-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><div class="mt-hero" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><nav class="lg-panel lg-glass lg-glass--thick" aria-label="Site (extended)"><a class="lg-menu__item" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5 8 3l5.5 4.5V13a.5.5 0 0 1-.5.5H10V10H6v3.5H3a.5.5 0 0 1-.5-.5z"/></svg>Overview</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="12" height="10" rx="2"/><circle cx="6" cy="6.5" r="1.2"/><path d="M2.5 11.5 6 8.5l3 2.5 2-1.5 2.5 2"/></svg>Work</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg>Shows</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a></nav><span class="lg-badge lg-badge--ok mt-tag">Do</span></div>
+  </div>
+</section>
+<section>
+  <h2 class="d-h">5 · Glass strength: Restrained (default, blur 18 · saturation 170%) and Stronger (data-glass="strong", blur 32 · saturation 210%)</h2>
+  <div class="mt-2">
+    <div class="lg-stage lg-stage--no-scrim mt-ladder" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><div class="lg-glass">Restrained</div></div>
+    <div class="lg-stage lg-stage--no-scrim mt-ladder" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><div class="lg-glass" style="--lg-blur:var(--blur-glass-strong);--lg-sat:var(--glass-saturate-strong)">Stronger</div></div>
+  </div>
+</section>
+<section>
+  <h2 class="d-h">6 · Fallback ladder: the same island at three levels of browser support</h2>
+  <div class="mt-3">
+    <div class="lg-stage lg-stage--no-scrim mt-ladder" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><div class="lg-glass" data-refract>Rung 2: Refraction + Blur (Chromium)</div></div>
+    <div class="lg-stage lg-stage--no-scrim mt-ladder" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><div class="lg-glass">Rung 1: Blur + Highlight</div></div>
+    <div class="lg-stage lg-stage--no-scrim mt-ladder" data-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><div class="lg-glass mt-opaque">Rung 0: Opaque Surface</div></div>
+  </div>
+</section>
+</main>
+<script>
+LiquidGlass.init(document);
+</script>
+</body>
+</html>

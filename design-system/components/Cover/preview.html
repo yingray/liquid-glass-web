@@ -1,0 +1,54 @@
+<!-- @dsCard height=288 -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Liquid Glass Web</title>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--canvas); color: var(--ink); font-family: var(--font-sans); overflow: hidden; }
+  .cover { position: relative; width: 960px; height: 288px; overflow: hidden; }
+  .art { position: absolute; top: 0; left: 480px; width: 480px; height: 288px; overflow: hidden; }
+  .art svg { display: block; width: 480px; height: 288px; }
+  .stage { fill: var(--stage); }
+  .accent { fill: var(--accent); }
+  .muted { fill: var(--ink-muted); }
+  .ground { fill: var(--canvas); }
+  .glass { fill: var(--glass); stroke: var(--glass-edge); stroke-width: 1; }
+  .ink { fill: var(--ink); }
+  .r-3xl { rx: var(--radius-3xl); }
+  .r-panel { rx: var(--radius-panel); }
+  .words { position: absolute; left: var(--space-24); bottom: var(--space-24); max-width: 440px; }
+  .name { margin: 0; font-size: 80px; line-height: 0.95; font-weight: 600; letter-spacing: -0.03em; color: var(--ink); }
+  .tag { margin: var(--space-12) 0 0 2px; font-size: 14px; line-height: 20px; color: var(--ink-muted); }
+</style>
+</head>
+<body>
+<div class="cover">
+<div class="art" aria-hidden="true">
+<svg viewBox="0 0 480 288" width="480" height="288">
+<!--
+  blocks      accent 232×288 slab bled off the top (radius-3xl), the colour the system is known by · ink 120×168 beside it (radius-panel) · ink-muted 96×148 bled off the top-right (radius-panel) — ≈ 32% of 960×288
+  arrangement one tall accent slab with satellites, bottoms on one line space-24 above the edge, space-16 gutters
+  pattern     capsules, from "navigation floats as separate glass capsules": three nav-height glass capsules laid on the slab, two canvas capsules cut into the muted block
+  scales      capsule height 42 (nav-height), gap space-10 (nav-gap); gutters space-16; corners radius-3xl, radius-panel; capsules rx half their height
+-->
+<rect class="accent r-3xl" x="16" y="-24" width="232" height="288" rx="24"/>
+<rect class="ink r-panel" x="264" y="96" width="120" height="168" rx="28"/>
+<rect class="muted r-panel" x="400" y="-28" width="96" height="148" rx="28"/>
+<rect class="glass" x="32" y="36" width="112" height="42" rx="21"/>
+<rect class="glass" x="154" y="36" width="78" height="42" rx="21"/>
+<rect class="glass" x="32" y="206" width="176" height="42" rx="21"/>
+<rect class="ink" x="48" y="51" width="12" height="12" rx="6"/>
+<rect class="stage" x="40" y="214" width="26" height="26" rx="13"/>
+<rect class="ground" x="414" y="72" width="56" height="20" rx="10"/>
+<rect class="ground" x="414" y="44" width="36" height="20" rx="10"/>
+</svg>
+</div>
+<div class="words">
+<h1 class="name">Liquid<br>Glass Web</h1>
+<p class="tag">Glass belongs to the navigation layer. Content always comes first.</p>
+</div>
+</div>
+</body>
+</html>

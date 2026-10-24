@@ -1,0 +1,57 @@
+<!-- @dsCard group="Controls" height=700 width=1000 subtitle="Draggable selection thumb that turns into glass while pressed" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>SegmentedControl — preview</title>
+<style>
+  html, body { margin: 0; }
+  body { background: var(--canvas); }
+  .d { box-sizing: border-box; padding: 24px; display: grid; gap: 32px; }
+  .d-h { margin: 0 0 12px; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .d-frame { position: relative; overflow: hidden; isolation: isolate; border-radius: 20px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .d-cap { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-page { position: absolute; inset: 0; overflow: hidden; }
+  .d-card { border-radius: 18px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+
+  .sg-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .sg-card { padding: 20px; display: grid; gap: 14px; justify-items: start; align-content: start; }
+  .sg-390 { width: 358px; }
+</style>
+</head>
+<body>
+<main class="d lg-root">
+<div class="sg-cols">
+  <section class="sg-card d-card">
+    <h2 class="d-h" style="margin:0">Sizes: sm (26), md (30, default), lg (32). Track inset 3px</h2>
+    <div class="lg-segmented lg-segmented--sm" role="radiogroup" aria-label="Zoom" data-lg="segmented"><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Fit</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">2×</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">4×</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    <div class="lg-segmented" role="radiogroup" aria-label="Compare mode" data-lg="segmented"><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Single</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Side by Side</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Grid</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Swipe</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    <div class="lg-segmented lg-segmented--lg" role="tablist" aria-label="Source" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Use Existing</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Ask the Assistant</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    <h2 class="d-h" style="margin:4px 0 0">States: “Side by Side” hover, “Grid” keyboard focus, “Swipe” disabled; items can carry a count badge</h2>
+    <div class="lg-segmented" role="radiogroup" aria-label="States demo" data-lg="segmented"><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Single</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false" data-state="hover">Side by Side</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false" data-state="focus">Grid</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false" aria-disabled="true">Swipe</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    <h2 class="d-h" style="margin:4px 0 0">While pressed and dragged, the thumb turns into glass and swells slightly; on release it settles back to solid</h2>
+    <div class="lg-segmented" role="radiogroup" aria-label="Pressed demo" data-lg="segmented" data-pressed><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Single</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Side by Side</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Grid</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+  </section>
+  <section class="sg-card d-card">
+    <h2 class="d-h" style="margin:0">Mobile 390: lg-segmented--block fills the width</h2>
+    <div class="sg-390"><div class="lg-segmented lg-segmented--block" role="radiogroup" aria-label="Filter" data-lg="segmented"><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">All</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Undecided</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Chosen</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div></div>
+    <h2 class="d-h" style="margin:4px 0 0">For navigation: the link version (aria-current), no JavaScript needed</h2>
+    <nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav>
+    <h2 class="d-h" style="margin:4px 0 0">Group disabled</h2>
+    <div class="lg-segmented" role="radiogroup" aria-label="Quality" data-lg="segmented" aria-disabled="true"><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Standard</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">High</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+  </section>
+</div>
+<section>
+  <h2 class="d-h">On the stage: lg-segmented--media (white thumb, dark text); right, the glass thumb while pressed</h2>
+  <div class="lg-stage" data-tone="dark" style="height:150px;display:grid;place-items:center"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 36% 40%, hsl(330 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 82% 74%, hsl(10 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(170 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(330 35% 26%) 0%, hsl(10 30% 9%) 100%)"></div>
+    <div class="d-row" style="position:relative"><div class="lg-segmented lg-segmented--media" role="radiogroup" aria-label="Compare mode (stage)" data-lg="segmented"><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Single</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Side by Side</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">Grid</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Swipe</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div><div class="lg-segmented lg-segmented--media" role="radiogroup" aria-label="Zoom (stage, pressed)" data-lg="segmented" data-pressed><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">Fit</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="true">2×</button><button class="lg-segmented__item" type="button" role="radio" aria-checked="false">4×</button><span class="lg-segmented__thumb" aria-hidden="true"></span></div></div>
+  </div>
+</section>
+</main>
+<script>
+LiquidGlass.init(document);
+</script>
+</body>
+</html>

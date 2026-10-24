@@ -1,0 +1,243 @@
+<!-- @dsCard group="Navigation" height=1450 width=1270 subtitle="Separate glass islands, scroll edge, mobile tab bar" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FloatingNavbar — preview</title>
+<style>
+  html, body { margin: 0; }
+  body { background: var(--canvas); }
+  .d { box-sizing: border-box; padding: 24px; display: grid; gap: 32px; }
+  .d-h { margin: 0 0 12px; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .d-frame { position: relative; overflow: hidden; isolation: isolate; border-radius: 20px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .d-cap { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-page { position: absolute; inset: 0; overflow: hidden; }
+  .d-card { border-radius: 18px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+
+  .nv-1440 { height: 172px; }
+  .nv-scroll { height: 300px; }
+  .nv-cards { position: absolute; left: 20px; right: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .nv-card { display: grid; gap: 4px; font-size: 13px; line-height: 18px; }
+  .nv-card b { font-weight: 600; }
+  .nv-card span { color: var(--ink-muted); font-size: 12px; }
+  .nv-thumb { aspect-ratio: 16 / 10; border-radius: 18px; }
+  .nv-mid { width: 980px; height: 120px; }
+  .nv-phones { display: flex; gap: 24px; align-items: flex-start; }
+  .nv-phone { width: 390px; height: 560px; border-radius: 40px; }
+  .nv-phone .nv-cards { grid-template-columns: 1fr 1fr; left: 16px; right: 16px; }
+  .nv-hero { position: absolute; inset: 0; border-radius: 0; }
+  .nv-phone figcaption { margin: 0 0 8px; }
+</style>
+</head>
+<body>
+<main class="d lg-root">
+<section>
+  <h2 class="d-h">Desktop 1440 (scaled): brand + app switcher, project context and tools each get their own island; the primary action “Export” stands outside the islands. The tools island holds icons only</h2>
+  <div class="d-frame nv-1440"><header class="lg-navbar lg-navbar--contained" data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="m1"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="m1" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header><div style="position:absolute;left:20px;right:20px;top:68px;bottom:-40px"><div class="nv-cards" style="top:0px"><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></div><b>Frame 11</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></div><b>Frame 12</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><b>Frame 13</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></div><b>Frame 14</b><span>Forest · 2026.03</span></div></div></div></div>
+</section>
+<section>
+  <h2 class="d-h">Scrolled: content passes under the islands and the scroll edge (data-scrolled) lays the canvas behind the glass; the toast uses thick glass</h2>
+  <div class="d-frame nv-scroll"><div class="nv-cards" style="top:28px"><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></div><b>Frame 11</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></div><b>Frame 12</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><b>Frame 13</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></div><b>Frame 14</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><b>Frame 15</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)"></div><b>Frame 16</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 46% 40%, hsl(140 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 77% 74%, hsl(180 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 71% 20%, hsl(340 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(140 35% 26%) 0%, hsl(180 30% 9%) 100%)"></div><b>Frame 17</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 36% 40%, hsl(330 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 82% 74%, hsl(10 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(170 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(330 35% 26%) 0%, hsl(10 30% 9%) 100%)"></div><b>Frame 18</b><span>Forest · 2026.03</span></div></div><header class="lg-navbar lg-navbar--contained" data-scrolled data-scroll-manual data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="m2"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="m2" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  <div class="lg-toast lg-toast--contained lg-glass lg-glass--popover" role="status">Added Frame 14 to the show.</div>
+</header></div>
+</section>
+<section>
+  <h2 class="d-h">744–1099px: optional context (breadcrumb, progress) hides automatically</h2>
+  <div class="d-frame nv-mid"><header class="lg-navbar lg-navbar--contained" data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="m3"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="m3" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header></div>
+</section>
+<section>
+  <h2 class="d-h">Mobile 390: only brand and menu at the top; main tabs move to the bottom tab bar, with search as a separate circle at the trailing end</h2>
+  <div class="nv-phones">
+    <div><p class="d-cap" style="margin:0 0 8px">① Top of the page</p><div class="d-frame nv-phone"><div class="lg-stage lg-stage--no-scrim nv-hero" data-surface-tone="dark"><div class="lg-stage__media" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div></div><header class="lg-navbar lg-navbar--contained" data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="m4"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="m4" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header><nav class="lg-tabbar lg-tabbar--contained" aria-label="Main tabs" data-lg="tabbar" data-minimize="scroll-down">
+  <div class="lg-scroll-edge lg-scroll-edge--bottom" aria-hidden="true"></div>
+  <div class="lg-tabbar__tabs lg-glass"><a class="lg-tabbar__tab" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg><span>Studio</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h3l1.5 1.5H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg><span>Library</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg><span>Shows</span></a></div><button class="lg-tabbar__search lg-glass" type="button" aria-label="Search"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+</nav></div></div>
+    <div><p class="d-cap" style="margin:0 0 8px">② Scrolled down: the tab bar shrinks to the current tab, with scroll edges top and bottom</p><div class="d-frame nv-phone"><div class="nv-cards" style="top:40px"><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></div><b>Frame 11</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></div><b>Frame 12</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><b>Frame 13</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></div><b>Frame 14</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><b>Frame 15</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)"></div><b>Frame 16</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 46% 40%, hsl(140 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 77% 74%, hsl(180 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 71% 20%, hsl(340 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(140 35% 26%) 0%, hsl(180 30% 9%) 100%)"></div><b>Frame 17</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 36% 40%, hsl(330 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 82% 74%, hsl(10 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(170 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(330 35% 26%) 0%, hsl(10 30% 9%) 100%)"></div><b>Frame 18</b><span>Forest · 2026.03</span></div></div><header class="lg-navbar lg-navbar--contained" data-scrolled data-scroll-manual data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="m5"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 5h11M2.5 11h11"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="m5" hidden>
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header><nav class="lg-tabbar lg-tabbar--contained" aria-label="Main tabs" data-lg="tabbar" data-minimize="scroll-down" data-minimized data-scrolled data-scroll-manual>
+  <div class="lg-scroll-edge lg-scroll-edge--bottom" aria-hidden="true"></div>
+  <div class="lg-tabbar__tabs lg-glass"><a class="lg-tabbar__tab" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg><span>Studio</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h3l1.5 1.5H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg><span>Library</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg><span>Shows</span></a></div><button class="lg-tabbar__search lg-glass" type="button" aria-label="Search"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+</nav></div></div>
+    <div><p class="d-cap" style="margin:0 0 8px">③ Menu: secondary items only, each with an icon</p><div class="d-frame nv-phone"><div class="nv-cards" style="top:70px"><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 38% 40%, hsl(220 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 81% 74%, hsl(260 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(60 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(220 35% 26%) 0%, hsl(260 30% 9%) 100%)"></div><b>Frame 11</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></div><b>Frame 12</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></div><b>Frame 13</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></div><b>Frame 14</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 60% 40%, hsl(250 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 70% 74%, hsl(290 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 66% 20%, hsl(90 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(250 35% 26%) 0%, hsl(290 30% 9%) 100%)"></div><b>Frame 15</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)"></div><b>Frame 16</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 46% 40%, hsl(140 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 77% 74%, hsl(180 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 71% 20%, hsl(340 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(140 35% 26%) 0%, hsl(180 30% 9%) 100%)"></div><b>Frame 17</b><span>Forest · 2026.03</span></div><div class="nv-card"><div class="nv-thumb" style="background-image:radial-gradient(34% 46% at 36% 40%, hsl(330 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 82% 74%, hsl(10 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 74% 20%, hsl(170 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(330 35% 26%) 0%, hsl(10 30% 9%) 100%)"></div><b>Frame 18</b><span>Forest · 2026.03</span></div></div><header class="lg-navbar lg-navbar--contained" data-scrolled data-scroll-manual data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass" data-refract>
+      <a class="lg-navbar__brand lg-focusable" href="#" aria-label="Lumen home"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="7.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12.6" cy="7.4" r="2.6" fill="currentColor"/></svg><span>Lumen</span></a>
+      <span class="lg-nav-desktop"><nav class="lg-segmented" aria-label="App"><a class="lg-segmented__item lg-navbar__link" href="#" aria-current="page">Studio</a><a class="lg-segmented__item lg-navbar__link" href="#">Library</a><a class="lg-segmented__item lg-navbar__link" href="#">Shows</a></nav></span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+      <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
+      <b style="font-weight:600">Island Light</b>
+      <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
+      <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
+    </div>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
+      <div class="lg-segmented" role="tablist" aria-label="Project area" data-lg="segmented"><button class="lg-segmented__item" type="button" role="tab" aria-selected="true">Picks</button><button class="lg-segmented__item" type="button" role="tab" aria-selected="false">Sources<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span></button><span class="lg-segmented__thumb" aria-hidden="true"></span></div>
+    </div>
+    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h10M3 8h10M3 12h6"/></svg><span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="true" aria-controls="m6"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="m6">
+    <span class="lg-menu__label">Island Light · 18 / 48 Selected</span>
+    <a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v3.2l2 1.3"/></svg>Activity</a><a class="lg-menu__item" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8v1.7M8 12.5v1.7M1.8 8h1.7M12.5 8h1.7M3.6 3.6l1.2 1.2M11.2 11.2l1.2 1.2M3.6 12.4l1.2-1.2M11.2 4.8l1.2-1.2"/></svg>Settings</a>
+  </div>
+  
+</header><nav class="lg-tabbar lg-tabbar--contained" aria-label="Main tabs" data-lg="tabbar" data-minimize="scroll-down" data-scrolled data-scroll-manual>
+  <div class="lg-scroll-edge lg-scroll-edge--bottom" aria-hidden="true"></div>
+  <div class="lg-tabbar__tabs lg-glass"><a class="lg-tabbar__tab" href="#" aria-current="page"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="1"/><rect x="9" y="9" width="4.5" height="4.5" rx="1"/></svg><span>Studio</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5a1 1 0 0 1 1-1h3l1.5 1.5H13a1 1 0 0 1 1 1V12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/></svg><span>Library</span></a><a class="lg-tabbar__tab" href="#"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2.5 14 5.5 8 8.5 2 5.5z"/><path d="M2 8.5l6 3 6-3"/></svg><span>Shows</span></a></div><button class="lg-tabbar__search lg-glass" type="button" aria-label="Search"><svg class="lg-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg></button>
+</nav></div></div>
+  </div>
+</section>
+</main>
+<script>
+LiquidGlass.init(document);
+</script>
+</body>
+</html>

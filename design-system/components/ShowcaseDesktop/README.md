@@ -1,0 +1,5 @@
+# ShowcaseDesktop
+
+ShowcaseDesktop is the 1440px app layout. At the top: four nav islands (brand with the main destinations Studio / Library / Shows, project context, project tabs, tools) plus a separate accent "Export". On the left: the stage (one label at the top edge, notes marked with plates in the middle of the frame, and a grouped toolbar at the bottom edge: play and timecode as one group, a separate primary action, and Add Note and Share as another group), the contact sheet as an opaque content panel, and the composer. On the right: the inspector (Needs Your Decision, Curator Question, In Progress, Notes, Activity).
+
+Use it to check the hierarchy: backdrop blur appears only on the nav islands and stage controls, 7 in total; the inspector and composer are fixed on solid canvas and use the unblurred `lg-glass--flat`; the contact sheet, photos and thumbnails are content and are opaque. One accent in the nav ("Export") and one on screen ("Review 4 Candidates"); Send stays neutral until there is text to send.

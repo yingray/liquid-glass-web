@@ -1,0 +1,65 @@
+<!-- @dsCard group="Showcase" height=820 width=1100 page subtitle="The small parts components are built from: rows, badges, callouts, inputs, media frames" -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Patterns — preview</title>
+<style>
+  html, body { margin: 0; }
+  body { background: var(--canvas); }
+  .d { box-sizing: border-box; padding: 24px; display: grid; gap: 32px; }
+  .d-h { margin: 0 0 12px; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .d-frame { position: relative; overflow: hidden; isolation: isolate; border-radius: 20px; background: var(--canvas); box-shadow: inset 0 0 0 1px var(--line); }
+  .d-cap { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+  .d-page { position: absolute; inset: 0; overflow: hidden; }
+  .d-card { border-radius: 18px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+
+  .pt-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; align-items: start; }
+  .pt-card { padding: 18px; display: grid; gap: 12px; align-content: start; }
+  .pt-card h3 { margin: 0; font: 600 13px/18px var(--font-sans); }
+  .pt-card .d-cap { margin-top: -6px; }
+  .pt-on-glass { padding: 6px; border-radius: 28px; display: grid; gap: 4px; }
+  .pt-frames { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pt-frames .lg-frame { aspect-ratio: 16 / 10; }
+  .pt-frames .lg-frame .lg-badge { position: absolute; left: 10px; top: 10px; }
+  .pt-frames .lg-frame .lg-badge--accent { left: auto; right: 10px; box-shadow: var(--elevation-pin); }
+  .pt-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pt-tiles > * { aspect-ratio: 16 / 10; }
+</style>
+</head>
+<body>
+<main class="d lg-root">
+<div class="pt-grid">
+  <section class="pt-card d-card"><h3>Rows (lg-row)</h3><p class="d-cap">Rest · selected (accent-soft) · hover (fill); row height 58 with roomier padding</p><div class="pt-on-glass lg-glass lg-glass--flat"><button class="lg-row" type="button"><span class="lg-row__thumb lg-row__thumb--md" style="background-image:radial-gradient(34% 46% at 52% 40%, hsl(28 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 74% 74%, hsl(68 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 69% 20%, hsl(228 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(28 35% 26%) 0%, hsl(68 30% 9%) 100%)"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#1</span></span><span class="lg-row__sub">The sky is blown out; the cloud detail is gone.</span></span></button><button class="lg-row" type="button" aria-selected="true"><span class="lg-row__thumb lg-row__thumb--md" style="background-image:radial-gradient(34% 46% at 44% 40%, hsl(300 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 78% 74%, hsl(340 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(140 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(300 35% 26%) 0%, hsl(340 30% 9%) 100%)"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#2</span><span class="lg-badge lg-badge--sm lg-badge--accent">Recommended</span></span><span class="lg-row__sub">Best tonal range; matches Frame 13.</span></span></button><button class="lg-row" type="button" data-state="hover"><span class="lg-row__thumb lg-row__thumb--md" style="background-image:radial-gradient(34% 46% at 40% 40%, hsl(175 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(215 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 73% 20%, hsl(15 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(175 35% 26%) 0%, hsl(215 30% 9%) 100%)"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#3</span><span class="lg-badge lg-badge--sm lg-badge--outline-warn">Flagged</span></span><span class="lg-row__sub">Flare at bottom left.</span></span></button></div></section>
+  <section class="pt-card d-card"><h3>Badges and Status Dots</h3>
+    <div class="d-row" style="gap:8px"><span class="lg-badge lg-badge--accent">Recommended</span><span class="lg-badge lg-badge--ok">Chosen</span><span class="lg-badge lg-badge--outline-warn">Flagged</span><span class="lg-badge lg-badge--count">2</span><span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span><span class="lg-badge lg-badge--mono">@12–18</span><span class="lg-badge">Draft</span></div>
+    <div class="lg-legend footnote"><span><i class="lg-dot lg-dot--ok"></i>Chosen</span><span><i class="lg-dot lg-dot--accent"></i>Needs You</span><span><i class="lg-dot"></i>Processing</span><span><i class="lg-dot lg-dot--warn"></i>Has Question</span></div>
+    <p class="d-cap" style="margin:0">Status is always a dot plus text, never color alone.</p>
+  </section>
+  <section class="pt-card d-card"><h3>Callout</h3>
+    <div class="lg-callout lg-callout--lg"><span class="lg-callout__eyebrow">Assistant’s Suggestion</span><b class="title-3" style="font-size:16px;letter-spacing:-.01em">Pick #2</b><p>Best tonal range, and its color temperature matches Frame 13, so it won’t jump out on the wall.</p></div>
+    <div class="lg-callout lg-callout--warn"><span class="lg-callout__eyebrow">Frame 9 · Curator Question</span><p>Portrait only, but the wall needs landscape. Crop it, or use another?</p><div class="lg-callout__actions"><button class="lg-btn lg-btn--inverse lg-btn--sm" type="button">Crop to Landscape</button><button class="lg-btn lg-btn--tinted lg-btn--sm" type="button">Use Another</button></div></div>
+  </section>
+  <section class="pt-card d-card"><h3>Inputs and Chips</h3>
+    <input class="lg-input" type="text" placeholder="Name the angle" aria-label="Angle name">
+    <textarea class="lg-textarea" rows="2" placeholder="What should differ from the locked version?" aria-label="Notes"></textarea>
+    <input class="lg-input" type="text" value="H" aria-invalid="true" aria-label="Invalid example" aria-describedby="err1"><span id="err1" class="footnote" style="color:var(--danger);margin-top:-6px">Use at least 2 characters.</span>
+    <div class="lg-chips"><button class="lg-chip" type="button">Back</button><button class="lg-chip" type="button" aria-pressed="true">Backlit</button><button class="lg-chip" type="button">Wide</button></div>
+  </section>
+  <section class="pt-card d-card"><h3>Media Frames, Selection Rings and Plates</h3>
+    <div class="pt-frames" data-tone="dark"><div class="lg-frame" style="background-image:radial-gradient(34% 46% at 30% 40%, hsl(12 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 85% 74%, hsl(52 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 76% 20%, hsl(212 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(12 35% 26%) 0%, hsl(52 30% 9%) 100%)"><span class="lg-badge lg-plate">#1</span></div><div class="lg-frame is-selected" style="background-image:radial-gradient(34% 46% at 46% 40%, hsl(140 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 77% 74%, hsl(180 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 71% 20%, hsl(340 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(140 35% 26%) 0%, hsl(180 30% 9%) 100%)"><span class="lg-badge lg-plate">#2</span><span class="lg-badge lg-badge--accent" style="top:auto;bottom:10px">Recommended</span></div></div>
+    <p class="d-cap" style="margin:0">Media frames have no scrim, so numbers use lg-plate (a translucent backing with no blur). Selection ring 3px, inset 3px.</p>
+  </section>
+  <section class="pt-card d-card"><h3>Progress, Pins, Add Tiles, Waiting</h3>
+    <span class="lg-progress" style="--lg-value:62%"><span></span></span>
+    <div class="d-row" style="gap:10px"><span class="lg-pin">2</span><span class="lg-pin lg-pin--sm">3</span><span class="lg-pin lg-pin--sm lg-pin--done">1</span><span class="lg-stage" data-tone="dark" style="width:56px;height:56px;border-radius:16px;display:grid;place-items:center"><span class="lg-spinner" style="width:22px;height:22px"></span></span></div>
+    <div class="pt-tiles"><button class="lg-add-tile" type="button"><svg class="lg-icon" style="width:20px;height:20px" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>Add Angle</button><div class="lg-frame" style="background-image:radial-gradient(34% 46% at 42% 40%, hsl(45 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 79% 74%, hsl(85 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(245 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(45 35% 26%) 0%, hsl(85 30% 9%) 100%)"></div></div>
+  </section>
+</div>
+</main>
+<script>
+LiquidGlass.init(document);
+</script>
+</body>
+</html>
