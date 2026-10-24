@@ -11,6 +11,8 @@ from previews_head import art
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 C = os.path.join(ROOT, 'design-system', 'components')
 REPO = 'https://github.com/yingray/liquid-glass-web'
+ADOPTING = 'https://developer.apple.com/documentation/technologyoverviews/adopting-liquid-glass'
+HIG = 'https://developer.apple.com/design/human-interface-guidelines/'
 THEMES = [('auto', 'Auto'), ('dark', 'Dark'), ('light', 'Light'), ('dark-solid', 'Dark Solid'), ('light-solid', 'Light Solid'),
           ('dark-contrast', 'Dark Contrast'), ('light-contrast', 'Light Contrast')]
 DENSITIES = [('auto', 'Auto'), ('compact', 'Compact'), ('comfortable', 'Comfortable')]
@@ -226,7 +228,7 @@ def home_page(build_static, runtime, version, cards, size):
     <div class="lp-hero__copy">
       <span class="lg-badge lg-glass lg-glass--media lg-glass--chip">Version {e(v)} · MIT</span>
       <h1 id="hero-title">Glass for the controls. Content stays clear.</h1>
-      <p class="lp-lead">A framework-free design system that applies Apple's Liquid Glass guidance to responsive websites. One stylesheet, one small script, tokens in JSON.</p>
+      <p class="lp-lead">A framework-free design system that applies Apple's <a href="{ADOPTING}">Liquid Glass guidance</a> to responsive websites. One stylesheet, one small script, tokens in JSON.</p>
       <div class="lp-actions">
         <a class="lg-btn lg-btn--accent lg-btn--lg" href="#start">Get Started</a>
         <a class="lg-btn lg-glass lg-glass--thick lg-btn--lg" href="#components">Browse Components</a>
@@ -363,7 +365,7 @@ def home_page(build_static, runtime, version, cards, size):
   {card_index(cards, size, ext)}
 </section>'''
 
-    doc_links = ''.join(f'<a href="{REPO}/blob/main/{p}">{t}</a>' for t, p in DOCS) + f'<a href="{REPO}">Source on GitHub</a>'
+    doc_links = ''.join(f'<a href="{REPO}/blob/main/{p}">{t}</a>' for t, p in DOCS) + f'<a href="{HIG}">Apple Human Interface Guidelines</a><a href="{REPO}">Source on GitHub</a>'
     guidelines = f'<section id="guidelines" aria-labelledby="g-docs"><h2 id="g-docs">Guidelines</h2><nav class="lp-links" aria-labelledby="g-docs">{doc_links}</nav></section>'
 
     config = json.dumps({'themes': [t for t, _ in THEMES], 'densities': [d for d, _ in DENSITIES]})
