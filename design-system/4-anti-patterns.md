@@ -27,6 +27,8 @@
 | Darken the whole stage, or both edges when only one holds controls | The scrim hides the image that people came to judge | A band appears only where controls are (`.lg-stage__top`, `.lg-stage__bottom` or `data-scrim`); use `data-inspect` to hide controls and scrims |
 | Crop the work to fill the stage | People judge a frame they can't see in full | The stage shows the whole frame (`contain`); use `data-fit="cover"` only for browsing or decoration |
 | Put light glass on dark imagery | Secondary text drops to about 2:1 | Add `data-tone="dark"` to the stage; add `data-surface-tone="dark"` to dark sections |
+| Hide scrollbars (`scrollbar-width: none`) or draw them as glass with `::-webkit-scrollbar` | Mouse and keyboard users lose the cue that more content exists, and glass scrollbars put glass on glass | Keep the platform scrollbar; inner areas use the built-in thin scrollbar |
+| Fade the end of a scrolling row over its content, or add a scroll edge where no control floats | The fade darkens the work, and a scroll edge without floating controls is decoration | Size the items so the next one shows in part at the edge (built into `.lg-app__dock`) |
 | Set text in `ink-faint` (timecodes, shortcuts, descriptions) | It is only about 3:1 and is meant for arrows and ticks | Use `ink-muted` for text |
 | Dim secondary text with `opacity` | Opacity drops the text below 4.5:1, and no check proves the result | Use a proved token: `ink-muted`, or `ink-on-media-muted` on the stage |
 | Write a font size in a component, or a fixed `height` on a control | Text no longer follows the density, and larger text gets cut off | Use `font: var(--type-<role>)` and `min-height` |

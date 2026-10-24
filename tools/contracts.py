@@ -421,6 +421,33 @@ with sync_playwright() as p:
         pg.close()
     ok(not probs, f'UI-01/02 AppShell 320–1920 and landscape: no horizontal scroll, nothing under the nav, project, Picks/Sources (+ pending count), search, export and queue all reachable ({probs[:6]})')
 
+    # ---------- SCROLL · inner scroll areas (HIG "Scroll views": show that content continues; leave indicators to the platform) ----------
+    pg = b.new_page(viewport={'width': 1440, 'height': 700}); pg.set_content(shell); pg.wait_for_timeout(200)
+    sb = pg.evaluate('''[".lg-app__aside", ".lg-app__inspector"].map(s => { const c = getComputedStyle(document.querySelector(s)); return [s, c.scrollbarWidth, c.scrollbarColor, c.scrollbarGutter]; })''')
+    ok(all(w == 'thin' and col != 'auto' and g.startswith('stable') for _, w, col, g in sb), f'SCROLL side columns use a thin scrollbar in token colors and keep a stable gutter ({sb})')
+    pg.close()
+    pg = b.new_page(viewport={'width': 900, 'height': 700})
+    pg.set_content(doc('<div class="lg-panel lg-glass" style="max-height:120px">' + '<p>Line</p>' * 20 + '</div><dialog class="lg-modal" open><div class="lg-modal__body">x</div></dialog>'))
+    sb = pg.evaluate('''[".lg-panel", ".lg-modal__body"].map(s => getComputedStyle(document.querySelector(s)).scrollbarWidth)''')
+    ok(sb == ['thin', 'thin'], f'SCROLL panels and sheet bodies use a thin scrollbar ({sb})')
+    pg.close()
+    probs = []
+    for rtl in (False, True):
+        src = shell.replace('<html ', '<html dir="rtl" ', 1) if rtl else shell
+        for w in (320, 390, 479, 480, 600, 743):
+            pg = b.new_page(viewport={'width': w, 'height': 800}); pg.set_content(src); pg.wait_for_timeout(200)
+            r = pg.evaluate('''(rtl) => {
+              const d = document.querySelector(".lg-app__dock"), dr = d.getBoundingClientRect(), cs = getComputedStyle(d);
+              const tiles = [...d.children].map(t => t.getBoundingClientRect());
+              const edge = rtl ? dr.left : dr.right;
+              const cut = tiles.find(t => t.left < edge && t.right > edge);
+              const frac = cut ? (rtl ? (cut.right - edge) : (edge - cut.left)) / cut.width : 0;
+              return { scrolls: d.scrollWidth > d.clientWidth + 1, frac: Math.round(frac * 100) / 100, minW: Math.round(Math.min(...tiles.map(t => t.width))), thin: cs.scrollbarWidth };
+            }''', rtl)
+            if not r['scrolls'] or not (0.2 <= r['frac'] <= 0.8) or r['minW'] < 44 or r['thin'] != 'thin': probs.append((w, 'rtl' if rtl else 'ltr', r))
+            pg.close()
+    ok(not probs, f'SCROLL the phone dock shows part of the next frame at its trailing edge (LTR and RTL, 320–743), tiles ≥ 44px, thin scrollbar ({probs[:4]})')
+
     b.close()
 
 print(sum(R), '/', len(R))

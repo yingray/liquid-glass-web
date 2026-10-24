@@ -26,7 +26,7 @@ Never hand-edit `tokens.json` or a `preview.html`; the next `make build` overwri
      - **Contract** (change the contract, not the page): `mixedIconText`, `menuIconsMixed` (icons are optional in menus, but consistent inside one group), `tintedControlsInBar`.
      - **Style** (house style): `uppercase`, `notTitleCase`, `nonConcentric`, `crowdedGlass` (glass closer than 6px). A page can waive one of these rules with `data-lint-waive="<rule>: <reason>"`; the audit prints each waiver. The budget of 8 blurred elements per frame is a project heuristic and has no waiver.
    - **Interaction** (`tools/interact.py`, 82 checks): keyboard, focus return, sheets, menus, tab bar, themes, widths 320–1920.
-   - **Behaviour contracts** (`tools/contracts.py`, 96 checks): each check names the audit item (UI-xx) that it guards. They cover the operating contracts that the cards cannot show: keyboard, cancel, disabled, dynamic items, overlays, lifecycle, hit areas and layout geometry.
+   - **Behaviour contracts** (`tools/contracts.py`, 99 checks): each check names the audit item (UI-xx) or the topic (SCROLL) that it guards. They cover the operating contracts that the cards cannot show: keyboard, cancel, disabled, dynamic items, overlays, lifecycle, hit areas and layout geometry.
 3. Every behaviour change adds or updates a contract in `tools/contracts.py`, tagged with its UI-xx item. For a confirmed bug, write the failing test first, then fix the code.
 4. If you change the React adapter, run `python3 tools/react_contracts.py` (16 checks; it skips when `.ds-sync/node_modules` is missing).
 5. Look at the screenshots (`make shots`) in all six themes for anything you touched.

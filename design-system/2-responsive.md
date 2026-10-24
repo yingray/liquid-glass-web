@@ -37,6 +37,8 @@ The same markup serves every width. A task moves; it never disappears.
 
 This is the AppShell mapping. A page without an in-page header puts the project scope (areas, pending count, Export, Queue) in its own group in the navbar menu instead (`lg-nav-mobile` items).
 
+The dock shows part of the next frame at its trailing edge (the leading edge in RTL): 3.4 tiles below a 480px container, 5.4 above. The tile size comes from the container width (`--lg-dock-tile`), so no fade covers the frames. Inner scroll areas use a thin platform scrollbar; see "Scrollbars" in the brand book.
+
 A contact sheet uses tiles of one size: a contact sheet is not a timeline. A timeline with widths in proportion to duration is not part of v1.
 
 ## Component differences at the two widths

@@ -26,7 +26,7 @@ Load `tokens.css` (compiled from `tokens.json`, see `make build`), `components/b
 ```sh
 pip install playwright pillow && python -m playwright install chromium
 make build    # regenerate tokens.json, previews and tools/.cache/tokens.css
-make check    # contrast (1019 pairs), Apple rule audit (dark and light), 82 interaction tests, 96 behaviour contracts
+make check    # contrast (1019 pairs), Apple rule audit (dark and light), 82 interaction tests, 99 behaviour contracts
 make shots    # screenshots of every card in all six themes → tools/shots/
 python3 tools/react_contracts.py   # 16 checks for the Claude Design React adapter; skips without .ds-sync/node_modules
 ```

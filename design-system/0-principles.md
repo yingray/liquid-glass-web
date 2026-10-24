@@ -38,6 +38,7 @@ In this system:
 - The navbar, the tab bar and the content read one set of geometry variables (`--lg-nav-inset`, `--lg-nav-block`, `--content-top`).
 - An app inside a pane uses container queries (`.lg-app--contained`), so the navigation follows the pane width, not the window width.
 - The minimized tab bar keeps every tab.
+- A scroll area shows that it continues: the next item shows in part at the edge, and the platform scrollbar stays visible (thin in inner areas).
 
 ### C4 · Look, semantics, data and behavior agree
 
@@ -202,7 +203,7 @@ A contact sheet is not a timeline. Contact sheet tiles have a uniform width, so 
 | Contrast | `make contrast` | 1019 foreground, material and state pairs in six themes |
 | Design audit | `make audit` | Rule tiers in dark and light themes |
 | Interaction | `tools/interact.py` | 82 checks on the preview cards |
-| Behavior contracts | `tools/contracts.py` | 96 checks, each tagged with an audit ID |
+| Behavior contracts | `tools/contracts.py` | 99 checks, each tagged with an audit ID or a topic |
 | React adapter | `tools/react_contracts.py` | 16 checks, skipped without `.ds-sync/node_modules` |
 
 All of these run in headless Chromium. They do not replace checks on a real iPhone, an Android phone, Safari, Firefox, VoiceOver, NVDA or TalkBack. Do not mark an item "Meets" or "verified" until somebody runs those checks and records the device, browser and result. For a confirmed bug, write the failing test first, then fix it.

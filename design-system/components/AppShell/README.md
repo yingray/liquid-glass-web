@@ -33,7 +33,8 @@ The fluid page layout for an app: the navbar reservation at the top, a content g
 - `.lg-app` holds the navbar, `.lg-app__body` and the tab bar. Its top padding is `var(--content-top)`, so the first block always starts below the islands, on touch and on mobile too.
 - `.lg-app__body` is a size container (`lg-app-body`), so the grid follows the space the app really has. It keeps a 16px side gutter, or the safe area if that is larger.
 - `.lg-app__aside` and `.lg-app__inspector` are sticky below the navbar and scroll on their own when they are taller than the window.
-- `.lg-app__dock` holds the aside's list. Below 744px it becomes a horizontal row that scrolls on its own; the page itself never scrolls sideways.
+- `.lg-app__dock` holds the aside's list. Below 744px it becomes a horizontal row that scrolls on its own; the page itself never scrolls sideways. Each tile is `--lg-dock-tile` wide, so 3.4 tiles show (5.4 from a 480px container) and the next frame shows in part at the edge. Set your tiles to `width: var(--lg-dock-tile)` if a more specific rule sizes them.
+- The side columns, the dock, panels and sheet bodies use a thin platform scrollbar in `ink-faint`. The side columns keep a stable gutter. They have no scroll edge, because no control floats above them.
 - A contact sheet uses tiles of one size: a contact sheet is not a timeline. A timeline with widths in proportion to duration is not part of v1.
 - **The project header** stays in the main column at every width: the project name, the project areas (Picks / Sources) with the pending count, and the project actions. At ≥ 744px Export is a tinted button in the header and Queue is in the tools island; below 744px both move into a project actions menu (`role="menu"`) in the header.
 - **One accent per task scope**: in a review screen the accent is the review action on the stage; Export stays tinted or glass.

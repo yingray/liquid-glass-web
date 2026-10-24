@@ -930,6 +930,11 @@ dialog > .lg-toast { position: fixed; }
 /* side columns stay in view and scroll on their own when taller than the window */
 .lg-app__aside, .lg-app__inspector { position: sticky; top: var(--content-top); max-height: calc(100dvh - var(--content-top) - var(--space-16)); overflow-y: auto; overscroll-behavior: contain; }
 .lg-app__dock { display: flex; flex-direction: column; gap: var(--space-6); }
+/* Inner scroll areas (HIG "Scroll views"): the platform draws the scroll indicator, thin and in token colors.
+   Never hide it and never draw it as glass. Side columns keep a stable gutter, so a classic scrollbar does not shift the layout.
+   No scroll edge here: an edge effect belongs only under floating controls. */
+.lg-app__aside, .lg-app__inspector, .lg-app__dock, .lg-panel, .lg-modal__body { scrollbar-width: thin; scrollbar-color: var(--ink-faint) transparent; }
+.lg-app__aside, .lg-app__inspector { scrollbar-gutter: stable; }
 @container lg-app-body (max-width: 1099px) {
   .lg-app__grid { grid-template-columns: minmax(0, var(--lg-aside-w-compact, 200px)) minmax(0, 1fr); }
   .lg-app__inspector { grid-column: 2; position: static; max-height: none; overflow: visible; }
@@ -938,8 +943,14 @@ dialog > .lg-toast { position: fixed; }
   .lg-app__grid { grid-template-columns: minmax(0, 1fr); }
   .lg-app__aside, .lg-app__inspector { grid-column: 1; position: static; max-height: none; overflow: visible; }
   /* local horizontal scroll: the page itself never scrolls sideways */
-  .lg-app__dock { flex-direction: row; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; padding-bottom: var(--space-4); }
-  .lg-app__dock > * { flex: none; scroll-snap-align: start; }
+  /* The dock shows part of the next frame at its trailing edge, so it is clear that the row continues (3.4 tiles; 5.4 from 480px).
+     The size comes from the container width, so it works in RTL and needs no fade over the content. */
+  .lg-app__dock { flex-direction: row; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; padding-bottom: var(--space-4);
+    --lg-dock-tile: calc((100cqi - 3 * var(--space-6)) / 3.4); }
+  .lg-app__dock > * { flex: none; width: var(--lg-dock-tile); scroll-snap-align: start; }
+}
+@container lg-app-body (min-width: 480px) and (max-width: 743px) {
+  .lg-app__dock { --lg-dock-tile: calc((100cqi - 5 * var(--space-6)) / 5.4); }
 }
 @media (max-width: 743px) {
   /* room for the floating tab bar, so the last block can scroll above it */
@@ -1043,6 +1054,7 @@ dialog > .lg-toast { position: fixed; }
 @media (forced-colors: active) {
   :is(.lg-glass, .lg-btn, .lg-segmented, .lg-modal, .lg-row, .lg-badge, .lg-composer) { forced-color-adjust: auto; background: Canvas; color: CanvasText; border: 1px solid CanvasText; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; filter: none; }
   .lg-btn { color: ButtonText; border-color: ButtonText; }
+  .lg-app__aside, .lg-app__inspector, .lg-app__dock, .lg-panel, .lg-modal__body { scrollbar-color: auto; }
   .lg-btn:is(:disabled, [aria-disabled="true"]) { color: GrayText; border-color: GrayText; }
   :is(.lg-btn[aria-pressed="true"], .lg-segmented__thumb, .lg-row[aria-selected="true"], .lg-tabbar__tab[aria-current="page"]) { background: Highlight; color: HighlightText; }
   :is(.lg-plate, .lg-tabbar__tab) { forced-color-adjust: auto; background: Canvas; color: CanvasText; }

@@ -619,7 +619,7 @@ export interface AppShellProps extends React.HTMLAttributes<HTMLDivElement> {
   navbar?: React.ReactNode;
   /** A TabBar: it shows below 744px of the app's own width. */
   tabbar?: React.ReactNode;
-  /** Left column (contact sheet, scenes). Below 744px it becomes a block; give its list class lg-app__dock to scroll it sideways. */
+  /** Left column (contact sheet, scenes). Below 744px it becomes a block; give its list class lg-app__dock to scroll it sideways; tiles are var(--lg-dock-tile) wide, so the next one shows in part at the edge. */
   aside?: React.ReactNode;
   asideLabel?: string;
   /** Right column ≥ 1100px; below main at 744–1099px; after the content below 744px. */
