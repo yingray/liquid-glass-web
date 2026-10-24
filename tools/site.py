@@ -43,6 +43,16 @@ def cards():
     return out
 
 
+def canvas(name):
+    """Width of a fixed card canvas, or None when the card is fluid (it has its own viewport meta)."""
+    p = os.path.join(C, name, 'preview.html')
+    src = rd(p)
+    if 'name="viewport"' in src:
+        return None
+    m = re.search(r'width=(\d+)', src.split('\n', 1)[0])
+    return int(m.group(1)) if m else 980
+
+
 ORDER = ['Showcase', 'Controls', 'Navigation', 'Overlays']
 
 
@@ -64,6 +74,9 @@ def runtime(default_theme):
 def card_page(name):
     src = rd(os.path.join(C, name, 'preview.html'))
     src = re.sub(r'^<!-- @dsCard[^\n]*\n', '', src)
+    w = canvas(name)
+    if w:  # a fixed canvas: phones open the whole canvas zoomed out, and people can pinch to zoom
+        src = src.replace('<head>', f'<head><meta name="viewport" content="width={w}">', 1)
     return src.replace('<html lang', '<html data-theme="dark" lang', 1).replace('<head>', '<head>' + runtime('dark'), 1)
 
 
@@ -88,6 +101,7 @@ HOME_CSS = '''
   .card:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-gap); }
   .card b { font: var(--type-headline); }
   .card span { color: var(--ink-muted); font: var(--type-callout); }
+  .card i { color: var(--ink-muted); font: var(--type-footnote); font-style: normal; }
   .links { display: flex; flex-wrap: wrap; gap: var(--space-8); }
   .links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--space-12); border-radius: var(--radius-capsule);
     background: var(--fill); color: var(--ink); text-decoration: none; font: var(--type-label); }
@@ -103,12 +117,16 @@ def home_page(build_static):
         # Links keep the other setting; the current one is set by the script below from the query string.
         return ''.join(f'<a class="lg-chip" data-pick-{key}="{v}" href="?{key}={v}">{html.escape(label)}</a>' for v, label in items)
 
+    def size(d):
+        w = canvas(d)
+        return f'Fixed canvas, {w}px' if w else 'Fluid, 320px and up'
+
     groups = {}
     for g, d, s in cards():
         groups.setdefault(g, []).append((d, s))
     sections = ''.join(
         f'<section aria-labelledby="g-{i}"><h2 id="g-{i}">{html.escape(g)}</h2><ul class="grid">' +
-        ''.join(f'<li><a class="card" data-card href="cards/{d}{ext}"><b>{d}</b><span>{html.escape(s)}</span></a></li>' for d, s in items) +
+        ''.join(f'<li><a class="card" data-card href="cards/{d}{ext}"><b>{d}</b><span>{html.escape(s)}</span><i>{size(d)}</i></a></li>' for d, s in items) +
         '</ul></section>' for i, (g, items) in enumerate(sorted(groups.items(), key=lambda kv: (ORDER.index(kv[0]) if kv[0] in ORDER else len(ORDER), kv[0]))))
     docs = [('Principles', 'design-system/0-principles.md'), ('Brand Book', 'design-system/README.md'),
             ('Accessibility', 'design-system/3-accessibility.md'), ('Apple Alignment', 'design-system/5-apple-alignment.md'),
@@ -140,7 +158,7 @@ def home_page(build_static):
   <section class="look" aria-label="Look">
     <div class="look__row"><span class="look__label" id="l-theme">Theme</span><nav class="lg-chips" aria-labelledby="l-theme">{look_links('theme', THEMES)}</nav></div>
     <div class="look__row"><span class="look__label" id="l-density">Density</span><nav class="lg-chips" aria-labelledby="l-density">{look_links('density', DENSITIES)}</nav></div>
-    <p class="note">Auto follows your system settings: light or dark, Increase Contrast and Reduce Transparency. Each card opens with the look that you pick here.</p>
+    <p class="note">Auto follows your system settings: light or dark, Increase Contrast and Reduce Transparency. Each card opens with the look that you pick here. AppShell is the fluid layout reference; the other cards are fixed canvases, so a phone opens them zoomed out.</p>
   </section>
   {sections}
   <section aria-labelledby="g-docs"><h2 id="g-docs">Guidelines</h2><nav class="links" aria-labelledby="g-docs">{doc_links}</nav></section>
