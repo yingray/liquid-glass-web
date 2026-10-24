@@ -14,7 +14,7 @@
 - `.design-sync/node_modules` must be a symlink to `../.ds-sync/node_modules` (recreate per clone). Without it the converter cannot find `@types/react` from the adapter package and inherited props resolve to `any` (`[DTS_REACT]`).
 - Prop JSDoc is cut at 120 characters in the emitted `.d.ts`. Keep per-prop comments short and put rules in the component-level comment.
 - Controllers mutate ARIA attributes (`aria-checked`, `aria-pressed`, `hidden`) directly. Adapters render those attributes from props that do not change on re-render, so React never fights the controller.
-- `SF Pro` is listed in `runtimeFontPrefixes`. The brand book says to use the system font stack and never embed SF Pro (Apple-only license), so no font files ship by design.
+- `--font-sans` does not name `"SF Pro Text"`. `-apple-system` and `BlinkMacSystemFont` already resolve to SF Pro on Apple devices. A named SF Pro family makes Claude Design show a "Missing brand font" warning, and the brand book forbids shipping SF Pro files (Apple-only license). Do not add the name back, and do not add a `runtimeFontPrefixes` entry for it.
 - Undefined `--lg-*` variables in validate are set at runtime by `bundle.js` (`--lg-value`, `--lg-origin`, `--lg-thumb-x`, ...). Expected.
 - Contact-sheet scale is misleading for widths. Measure in the browser (`getBoundingClientRect`) before calling a layout wrong.
 

@@ -56,9 +56,6 @@
     "ProgressBar": "categories/Patterns.md",
     "Stage": "categories/Media.md"
   },
-  "runtimeFontPrefixes": [
-    "SF Pro"
-  ],
   "overrides": {
     "FloatingNavbar": {
       "cardMode": "column"

@@ -40,7 +40,7 @@ tokens = {
     "type": {
         "fonts": [],
         "families": {
-            "sans": "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Segoe UI\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
+            "sans": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", system-ui, sans-serif",
             "mono": "ui-monospace, \"SF Mono\", Menlo, Consolas, monospace"},
         "groups": [
             {"name": "Display", "family": "sans", "note": "Titles are always 600 weight with negative tracking (bundle.css resets tracking to zero for CJK titles). display-1 is only for website hero headings; app interfaces start at title-1.", "styles": [
