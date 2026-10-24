@@ -1,0 +1,77 @@
+{
+  "projectId": "57488c7a-1e70-465a-8529-463f87551b9c",
+  "shape": "package",
+  "pkg": "liquid-glass-web-react",
+  "globalName": "LiquidGlassUI",
+  "buildCmd": "make build && node .design-sync/react/build.mjs",
+  "cssEntry": "dist/liquid-glass.css",
+  "guidelinesGlob": [
+    "guides/**/*.md"
+  ],
+  "provider": {
+    "component": "LiquidGlassRoot",
+    "props": {
+      "theme": "dark"
+    }
+  },
+  "componentSrcMap": {
+    "LiquidGlassRoot": "src/index.d.ts",
+    "Icon": "src/index.d.ts",
+    "GlassButton": "src/index.d.ts",
+    "SegmentedControl": "src/index.d.ts",
+    "Chip": "src/index.d.ts",
+    "TextField": "src/index.d.ts",
+    "FloatingNavbar": "src/index.d.ts",
+    "TabBar": "src/index.d.ts",
+    "Toolbar": "src/index.d.ts",
+    "Composer": "src/index.d.ts",
+    "GlassPanel": "src/index.d.ts",
+    "Menu": "src/index.d.ts",
+    "Modal": "src/index.d.ts",
+    "Badge": "src/index.d.ts",
+    "StatusDot": "src/index.d.ts",
+    "ListRow": "src/index.d.ts",
+    "Callout": "src/index.d.ts",
+    "ProgressBar": "src/index.d.ts",
+    "Stage": "src/index.d.ts"
+  },
+  "docsMap": {
+    "LiquidGlassRoot": "categories/Foundations.md",
+    "Icon": "categories/Foundations.md",
+    "GlassButton": "categories/Controls.md",
+    "SegmentedControl": "categories/Controls.md",
+    "Chip": "categories/Controls.md",
+    "TextField": "categories/Controls.md",
+    "FloatingNavbar": "categories/Navigation.md",
+    "TabBar": "categories/Navigation.md",
+    "Toolbar": "categories/Navigation.md",
+    "Composer": "categories/Navigation.md",
+    "GlassPanel": "categories/Overlays.md",
+    "Menu": "categories/Overlays.md",
+    "Modal": "categories/Overlays.md",
+    "Badge": "categories/Patterns.md",
+    "StatusDot": "categories/Patterns.md",
+    "ListRow": "categories/Patterns.md",
+    "Callout": "categories/Patterns.md",
+    "ProgressBar": "categories/Patterns.md",
+    "Stage": "categories/Media.md"
+  },
+  "runtimeFontPrefixes": [
+    "SF Pro"
+  ],
+  "overrides": {
+    "FloatingNavbar": {
+      "cardMode": "column"
+    },
+    "LiquidGlassRoot": {
+      "cardMode": "column"
+    },
+    "Composer": {
+      "cardMode": "column"
+    },
+    "Toolbar": {
+      "cardMode": "column"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}

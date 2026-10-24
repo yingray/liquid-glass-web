@@ -1,0 +1,10 @@
+{
+  "name": "liquid-glass-web-react",
+  "version": "3.2.0",
+  "private": true,
+  "description": "React adapters over design-system/components (bundle.css + bundle.js) for Claude Design",
+  "type": "module",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts"
+}
