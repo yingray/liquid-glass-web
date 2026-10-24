@@ -1,8 +1,13 @@
 /* Liquid Glass Web — component styles (v3: aligned with Apple's "Adopting Liquid Glass").
    Every value comes from tokens.css (generated from tokens.json); this file only composes them.
    0 base · 1 material · 2 stage · 3 focus · 4 GlassButton · 5 badges & dots · 6 SegmentedControl
-   7 FloatingNavbar & TabBar · 8 Toolbar & Composer · 9 GlassPanel, menu, toast · 10 Modal (sheet)
-   11 patterns · 12 motion · 13 touch · 14 modes & fallbacks */
+   7 FloatingNavbar & TabBar · 8 Toolbar & Composer · 9 GlassPanel, menu, toast, tooltip · 10 Modal (sheet)
+   11 patterns · 11b AppShell · 12 motion · 13 touch · 14 modes & fallbacks
+   Rules for this file (see design-system/0-principles.md):
+   - Text uses a type role: font: var(--type-<role>). Never write a font size here; tokens.json owns them.
+   - Controls use min-height, never a fixed height, so larger text and comfortable density grow them.
+   - State colors come from a token pair that check_contrast.py proves; never dim text with opacity.
+   - Floating geometry (nav inset, nav height, content top) comes from the --lg-nav-* variables below. */
 
 @property --lg-state { syntax: "<color>"; inherits: false; initial-value: transparent; }
 
@@ -15,9 +20,7 @@
   margin: 0;
   background: var(--canvas);
   color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: 14px;
-  line-height: 20px;
+  font: var(--type-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -30,6 +33,17 @@
 .lg-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .lg-icon { width: var(--icon-md); height: var(--icon-md); flex: none; display: block; }
 .lg-spacer { flex: 1; }
+/* Floating geometry: one source for the navbar row, its menu, the scroll edge, content-top and scroll padding.
+   --lg-nav-inset: gap above the navbar. --lg-nav-block: island height (taller on touch). */
+:root, .lg-app {
+  --lg-nav-inset: var(--nav-top);
+  --lg-nav-block: var(--nav-height);
+  --lg-nav-bottom: calc(var(--lg-nav-inset) + env(safe-area-inset-top, 0px) + var(--lg-nav-block));
+  --content-top: calc(var(--lg-nav-bottom) + var(--space-12));
+}
+:root { scroll-padding-top: var(--content-top); }
+@media (max-width: 743px) { :root, .lg-app { --lg-nav-inset: var(--nav-inset-mobile); } }
+@media (pointer: coarse) { :root, .lg-app { --lg-nav-block: calc(var(--target-min) + 10px); } }
 
 /* ---------- 1. Material ---------- */
 /* Glass sits on the canvas (or on content that scrolls under it, with .lg-scroll-edge behind).
@@ -81,8 +95,8 @@
   position: fixed;
   inset: 0 0 auto;
   z-index: calc(var(--z-nav) - 1);
-  height: calc(var(--nav-top) + var(--nav-height) + var(--space-24));
-  background: linear-gradient(var(--scroll-edge) calc(var(--nav-top) + var(--nav-height) + var(--space-4)), transparent);
+  height: calc(var(--lg-nav-bottom) + var(--space-24));
+  background: linear-gradient(var(--scroll-edge) calc(var(--lg-nav-bottom) + var(--space-4)), transparent);
   pointer-events: none;
   opacity: 0;
   transition: opacity var(--duration-base) var(--ease-standard);
@@ -105,20 +119,35 @@
   background: var(--stage);
   color: var(--ink-on-media);
 }
-.lg-stage__media { position: absolute; inset: 0; z-index: 0; background-size: cover; background-position: 50% 50%; }
+/* The work is the content: show the whole frame by default (contain). data-fit="cover" is an opt-in for
+   decorative or browsing views where a crop is acceptable. Works for a background div, <img> and <video>. */
+.lg-stage__media { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; background-size: contain; background-repeat: no-repeat; background-position: 50% 50%; object-fit: contain; }
+:is(.lg-stage[data-fit="cover"] > .lg-stage__media, .lg-stage__media[data-fit="cover"]) { background-size: cover; object-fit: cover; }
+/* Scrims darken only the band that holds controls (.lg-stage__top, .lg-stage__bottom, or data-scrim="top|bottom|both").
+   Bands are fixed-height, so labels get full-strength darkening, but never cover more than a quarter of a short stage. */
+.lg-stage {
+  --lg-scrim-top: linear-gradient(180deg, var(--media-scrim-top) 0, var(--media-scrim-top) min(64px, 25%), transparent min(140px, 50%));
+  --lg-scrim-bottom: linear-gradient(0deg, var(--media-scrim-bottom) 0, var(--media-scrim-bottom) min(88px, 25%), transparent min(180px, 50%));
+}
 .lg-stage::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  /* fixed-height bands, so labels and toolbars get full-strength darkening on a stage of any height */
-  background:
-    linear-gradient(180deg, var(--media-scrim-top) 0, var(--media-scrim-top) 64px, transparent 140px),
-    linear-gradient(0deg, var(--media-scrim-bottom) 0, var(--media-scrim-bottom) 88px, transparent 180px);
+  background: none;
 }
-.lg-stage--no-scrim::after { display: none; }
+:is(.lg-stage:has(> .lg-stage__top), .lg-stage[data-scrim="top"])::after { background: var(--lg-scrim-top); }
+:is(.lg-stage:has(> .lg-stage__bottom), .lg-stage[data-scrim="bottom"])::after { background: var(--lg-scrim-bottom); }
+:is(.lg-stage:has(> .lg-stage__top):has(> .lg-stage__bottom), .lg-stage[data-scrim="both"])::after { background: var(--lg-scrim-top), var(--lg-scrim-bottom); }
+@supports not selector(:has(*)) { .lg-stage:not([data-scrim])::after { background: var(--lg-scrim-top), var(--lg-scrim-bottom); } }
+:is(.lg-stage--no-scrim, .lg-stage[data-scrim="none"])::after { display: none; }
 .lg-stage > :not(.lg-stage__media) { z-index: 2; }
+/* inspect mode: hide controls and scrims to judge the frame; .lg-stage__exit stays as the one way back */
+.lg-stage__exit { display: none; position: absolute; top: var(--space-16); right: var(--space-16); }
+.lg-stage[data-inspect]::after { background: none; }
+.lg-stage[data-inspect] > :is(.lg-stage__top, .lg-stage__bottom) { display: none; }
+.lg-stage[data-inspect] > .lg-stage__exit { display: inline-flex; }
 .lg-stage__top { position: absolute; left: var(--space-16); right: var(--space-16); top: var(--space-16); display: flex; align-items: center; gap: var(--space-6); flex-wrap: wrap; }
 .lg-stage__bottom { position: absolute; left: var(--space-16); right: var(--space-16); bottom: var(--space-16); display: flex; justify-content: center; }
 .lg-frame {
@@ -128,10 +157,41 @@
   background: var(--stage);
   color: var(--ink-on-media);
 }
-/* selection outline: accent on dark grounds, accent-text on light ones (accent is only 2.4:1 on a light page) */
-[data-theme^="dark"], :root { --lg-ring: var(--accent); }
-[data-theme^="light"] { --lg-ring: var(--accent-text); }
-.lg-frame[aria-selected="true"], .lg-frame.is-selected { outline: var(--ring-selected) solid var(--lg-ring); outline-offset: calc(-1 * var(--ring-selected)); }
+/* Selection: a two-tone inset ring (accent outside, a dark keyline inside, so it reads on any image) plus a check
+   mark, so selection is not color alone. It lives in ::after above the media; the outline stays free for focus.
+   Accent on dark grounds, accent-text on light ones (accent is only 2.4:1 on a light page). */
+[data-theme^="dark"], :root { --lg-ring: var(--accent); --lg-ring-ink: var(--on-accent); }
+[data-theme^="light"] { --lg-ring: var(--accent-text); --lg-ring-ink: var(--canvas); }
+.lg-selected-ring, .lg-frame:is([aria-selected="true"], [aria-current="true"], [aria-pressed="true"], .is-selected) {
+  --lg-sel: inset 0 0 0 var(--ring-selected) var(--lg-ring), inset 0 0 0 calc(var(--ring-selected) + 1.5px) var(--media-plate);
+}
+.lg-frame:is([aria-selected="true"], [aria-current="true"], [aria-pressed="true"], .is-selected) { outline: none; }
+.lg-frame:is([aria-selected="true"], [aria-current="true"], [aria-pressed="true"], .is-selected)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: var(--lg-sel);
+  pointer-events: none;
+}
+.lg-frame:is([aria-selected="true"], [aria-current="true"], [aria-pressed="true"], .is-selected)::before {
+  content: "✓";
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--lg-ring);
+  color: var(--lg-ring-ink);
+  font: var(--type-micro);
+  pointer-events: none;
+}
+.lg-frame:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-gap); }
 
 /* ---------- 3. Focus: two-tone ring ---------- */
 :is(.lg-btn, .lg-navbar__link, .lg-navbar__brand, .lg-segmented__item, .lg-row, .lg-menu__item, .lg-tabbar__tab, .lg-tabbar__search, .lg-focusable):is(:focus-visible, [data-state="focus"]) {
@@ -155,7 +215,7 @@
   justify-content: center;
   gap: var(--space-6);
   flex: none;
-  height: var(--lg-h);
+  min-height: var(--lg-h);
   min-width: var(--lg-h);
   margin: 0;
   padding: 0 var(--lg-px);
@@ -164,7 +224,7 @@
   background-color: var(--lg-bg);
   background-image: linear-gradient(var(--lg-state), var(--lg-state));
   color: var(--lg-fg);
-  font: 600 13px/18px var(--font-sans);
+  font: var(--type-label);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
@@ -173,11 +233,11 @@
   transition: background-color var(--duration-fast) var(--ease-standard), --lg-state var(--duration-fast) var(--ease-standard),
     color var(--duration-fast) var(--ease-standard), filter var(--duration-fast) var(--ease-standard), box-shadow var(--duration-fast) var(--ease-standard);
 }
-.lg-btn--xs { --lg-h: var(--control-xs); --lg-px: var(--space-10); font-size: 12px; line-height: 16px; }
+.lg-btn--xs { --lg-h: var(--control-xs); --lg-px: var(--space-10); font: var(--type-label-sm); }
 .lg-btn--sm { --lg-h: var(--control-sm); --lg-px: var(--space-14); }
-.lg-btn--lg { --lg-h: var(--control-lg); --lg-px: var(--space-24); font-size: 14px; line-height: 20px; }
+.lg-btn--lg { --lg-h: var(--control-lg); --lg-px: var(--space-24); font: var(--type-body-strong); }
 .lg-btn--nav { --lg-h: var(--nav-height); --lg-px: var(--space-14); }
-.lg-btn--icon { padding: 0; width: var(--lg-h); }
+.lg-btn--icon { padding: 0; min-width: var(--lg-h); }
 .lg-btn--block { width: 100%; }
 .lg-btn .lg-icon { width: var(--icon-md); height: var(--icon-md); }
 :is(.lg-btn--xs, .lg-btn--sm) .lg-icon { width: var(--icon-sm); height: var(--icon-sm); }
@@ -199,7 +259,8 @@
 @media (hover: hover) {
   :is(.lg-btn--accent, .lg-btn--inverse, .lg-btn--media-solid, .lg-btn--danger[data-armed]):is(:hover, [data-state="hover"]):not(:disabled, [aria-disabled="true"]) { filter: brightness(var(--brightness-hover)); }
   .lg-btn--tinted:is(:hover, [data-state="hover"]):not(:disabled, [aria-disabled="true"], [aria-pressed="true"]) { --lg-bg: var(--fill-strong); }
-  .lg-btn--danger:not([data-armed]):is(:hover, [data-state="hover"]):not(:disabled, [aria-disabled="true"]) { --lg-bg: var(--fill-strong); }
+  /* hover and pressed grounds are lighter (dark themes) or darker (light themes): danger-strong keeps 4.5:1 on them */
+  .lg-btn--danger:not([data-armed]):is(:hover, [data-state="hover"]):not(:disabled, [aria-disabled="true"]) { --lg-bg: var(--fill-strong); --lg-fg: var(--danger-strong); }
   :is(.lg-btn--plain, .lg-btn--outline):is(:hover, [data-state="hover"]):not(:disabled, [aria-disabled="true"], [aria-pressed="true"]) { --lg-bg: var(--fill); }
   .lg-btn.lg-glass:is(:hover, [data-state="hover"]):not(:disabled, [aria-disabled="true"]) { --lg-state: var(--fill); }
   .lg-btn--media:is(:hover, [data-state="hover"]):not(:disabled, [aria-disabled="true"]) { --lg-bg: var(--media-fill-hover); }
@@ -208,6 +269,7 @@
 :is(.lg-btn--accent, .lg-btn--inverse, .lg-btn--media-solid, .lg-btn--danger[data-armed]):is(:active, [data-state="active"]):not(:disabled, [aria-disabled="true"]) { filter: brightness(var(--brightness-pressed)); }
 :is(.lg-btn--tinted, .lg-btn--plain, .lg-btn--outline, .lg-btn--danger:not([data-armed])):is(:active, [data-state="active"]):not(:disabled, [aria-disabled="true"]) { --lg-bg: var(--fill-pressed); }
 :is(.lg-btn.lg-glass, .lg-btn--media):is(:active, [data-state="active"]):not(:disabled, [aria-disabled="true"]) { --lg-state: var(--fill-pressed); }
+.lg-btn--danger:not([data-armed]):is(:active, [data-state="active"]):not(:disabled, [aria-disabled="true"]) { --lg-fg: var(--danger-strong); }
 /* toggles: pressed reads as the inverse fill */
 .lg-btn[aria-pressed="true"] { --lg-bg: var(--ink); --lg-fg: var(--canvas); box-shadow: none; }
 [data-tone="dark"] .lg-btn--media[aria-pressed="true"], .lg-stage .lg-btn--media[aria-pressed="true"] { --lg-bg: var(--ink-on-media); --lg-fg: var(--stage); }
@@ -221,37 +283,40 @@
   justify-content: center;
   gap: var(--space-4);
   flex: none;
-  height: 22px;
+  min-height: 22px;
   min-width: 22px;
   padding: 0 var(--space-10);
   border-radius: var(--radius-capsule);
   color: var(--ink);
-  font: 700 12px/16px var(--font-sans);
+  font: var(--type-label-sm);
+  font-weight: 700;
   white-space: nowrap;
 }
 /* default fill at zero specificity, so .lg-glass--media, .lg-plate and the colour variants always win */
 :where(.lg-badge) { background-color: var(--fill); }
 .lg-badge.lg-glass--media { color: var(--ink-on-media); }
-.lg-badge--sm { height: 18px; min-width: 18px; padding: 0 var(--space-6); font-size: 10.5px; line-height: 14px; }
-.lg-badge--count { height: 26px; min-width: 24px; padding: 0 var(--space-8); font-family: var(--font-mono); font-size: 12px; }
-.lg-badge--sm.lg-badge--count { height: 18px; min-width: 18px; padding: 0 5px; font-size: 10.5px; }
+.lg-badge--sm { min-height: 18px; min-width: 18px; padding: 0 var(--space-6); font: var(--type-micro); }
+.lg-badge--count { min-height: 26px; min-width: 24px; padding: 0 var(--space-8); font: var(--type-mono-label); font-weight: 700; }
+.lg-badge--sm.lg-badge--count { min-height: 18px; min-width: 18px; padding: 0 5px; font: var(--type-micro); font-family: var(--font-mono); }
 .lg-badge--accent { background: var(--accent); color: var(--on-accent); }
 .lg-badge--ok { background: var(--ok); color: var(--on-ok); }
 .lg-badge--warn { background: var(--warn); color: var(--on-warn); }
 .lg-badge--outline-warn { background: transparent; color: var(--warn); box-shadow: inset 0 0 0 var(--border-hairline) var(--warn); font-weight: 600; }
 .lg-badge--mono { font-family: var(--font-mono); font-weight: 600; color: var(--ink); }
-.lg-dot { display: inline-block; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--ink-faint); }
+/* Status dots differ in shape, not only hue (WCAG 1.4.1): ok = filled circle, accent = rounded square,
+   warn = diamond, neutral = hollow ring. Always pair a dot with a text label or an accessible name. */
+.lg-dot { box-sizing: border-box; display: inline-block; flex: none; width: 7px; height: 7px; border: 1.5px solid var(--ink-faint); border-radius: 50%; background: transparent; }
 .lg-dot--lg { width: 10px; height: 10px; }
-.lg-dot--ok { background: var(--ok); }
-.lg-dot--accent { background: var(--accent); }
-.lg-dot--warn { background: var(--warn); }
+.lg-dot--ok { background: var(--ok); border-color: var(--ok); }
+.lg-dot--accent { background: var(--accent); border-color: var(--accent); border-radius: 2px; }
+.lg-dot--warn { background: var(--warn); border-color: var(--warn); border-radius: 1px; transform: rotate(45deg) scale(0.9); }
 .lg-dot--ring { box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.35); }
 .lg-legend { display: flex; align-items: center; gap: var(--space-10); flex-wrap: wrap; color: var(--ink-muted); }
 .lg-legend > span { display: inline-flex; align-items: center; gap: 5px; }
 
 /* ---------- 6. SegmentedControl ---------- */
 .lg-segmented {
-  --lg-seg-h: 30px;
+  --lg-seg-h: var(--control-seg);
   position: relative;
   isolation: isolate;
   box-sizing: border-box;
@@ -261,6 +326,8 @@
   padding: 3px;
   border-radius: var(--radius-capsule);
   background: var(--fill);
+  /* horizontal drags belong to the control; vertical ones still scroll the page */
+  touch-action: pan-y;
 }
 .lg-segmented--sm { --lg-seg-h: var(--control-xs); }
 .lg-segmented--lg { --lg-seg-h: var(--control-sm); }
@@ -273,7 +340,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-6);
-  height: var(--lg-seg-h);
+  min-height: var(--lg-seg-h);
   min-width: 0;
   margin: 0;
   padding: 0 var(--space-14);
@@ -281,14 +348,14 @@
   border-radius: var(--radius-capsule);
   background: transparent;
   color: var(--ink-muted);
-  font: 600 13px/18px var(--font-sans);
+  font: var(--type-label);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   transition: color var(--duration-fast) var(--ease-standard);
 }
-.lg-segmented--sm .lg-segmented__item { padding: 0 var(--space-10); font-size: 12px; line-height: 16px; }
+.lg-segmented--sm .lg-segmented__item { padding: 0 var(--space-10); font: var(--type-label-sm); }
 @media (hover: hover) {
   .lg-segmented__item:is(:hover, [data-state="hover"]):not([aria-checked="true"], [aria-selected="true"], [aria-current="page"], :disabled, [aria-disabled="true"]) { color: var(--ink); }
 }
@@ -322,6 +389,9 @@
 .lg-segmented--media .lg-segmented__item { color: var(--ink-on-media); }
 .lg-segmented--media .lg-segmented__item:is([aria-checked="true"], [aria-selected="true"]) { color: var(--stage); }
 .lg-segmented--media .lg-segmented__thumb, .lg-segmented--media:not([data-ready]) .lg-segmented__item:is([aria-checked="true"], [aria-selected="true"]) { background: var(--ink-on-media); }
+/* pressed on media: the thumb turns into a dark plate, so the selected label flips back to white (proved pair) */
+.lg-segmented--media[data-pressed] .lg-segmented__thumb { background: var(--media-plate); }
+.lg-segmented--media[data-pressed] .lg-segmented__item:is([aria-checked="true"], [aria-selected="true"]) { color: var(--ink-on-media); }
 
 /* ---------- 7. FloatingNavbar: a row of glass islands ---------- */
 .lg-navbar {
@@ -337,7 +407,7 @@
   display: flex;
   align-items: center;
   gap: var(--nav-gap);
-  margin: calc(var(--nav-top) + env(safe-area-inset-top, 0px)) calc(var(--nav-side) + env(safe-area-inset-right, 0px)) 0 calc(var(--nav-side) + env(safe-area-inset-left, 0px));
+  margin: calc(var(--lg-nav-inset) + env(safe-area-inset-top, 0px)) calc(var(--nav-side) + env(safe-area-inset-right, 0px)) 0 calc(var(--nav-side) + env(safe-area-inset-left, 0px));
 }
 .lg-navbar__island {
   box-sizing: border-box;
@@ -346,21 +416,22 @@
   gap: var(--space-10);
   flex: none;
   min-width: 0;
-  height: var(--nav-height);
+  min-height: var(--lg-nav-block);
   padding: 0 5px 0 var(--space-14);
   border-radius: var(--radius-capsule);
-  font-size: 13px;
-  line-height: 18px;
+  font: var(--type-callout);
   white-space: nowrap;
   pointer-events: auto;
 }
 .lg-navbar__island--tight { padding: 0 5px; gap: var(--space-4); }
 .lg-navbar__island .lg-btn { --lg-h: var(--control-sm); }
 /* the primary action stands on its own next to the islands, not inside one */
-.lg-navbar__row > .lg-btn { pointer-events: auto; --lg-h: var(--nav-height); --lg-px: var(--space-16); }
+.lg-navbar__row > .lg-btn { pointer-events: auto; --lg-h: var(--lg-nav-block); --lg-px: var(--space-16); }
+/* scope grouping: a quiet label in front of controls that act on one object (selection, project) */
+.lg-navbar__scope { color: var(--ink-muted); font: var(--type-label-sm); }
 /* 26px items → 32px track: 5px from the island edge on every side, so the two capsules are concentric */
 .lg-navbar__island .lg-segmented { --lg-seg-h: var(--control-xs); }
-.lg-navbar__brand { display: inline-flex; align-items: center; gap: var(--space-8); color: var(--ink); text-decoration: none; font-weight: 600; border-radius: var(--radius-capsule); }
+.lg-navbar__brand { position: relative; display: inline-flex; align-items: center; gap: var(--space-8); color: var(--ink); text-decoration: none; font-weight: 600; border-radius: var(--radius-capsule); }
 .lg-navbar__brand svg { display: block; }
 .lg-navbar__crumb { display: inline-flex; align-items: center; gap: var(--space-8); min-width: 0; }
 .lg-navbar__crumb a { color: var(--ink-muted); text-decoration: none; }
@@ -372,7 +443,7 @@
 .lg-navbar__spacer { flex: 1; }
 .lg-navbar__menu {
   position: absolute;
-  top: calc(var(--nav-top) + var(--nav-height) + var(--space-8));
+  top: calc(var(--lg-nav-bottom) + var(--space-8));
   right: var(--nav-side);
   width: min(var(--menu-width), calc(100% - 2 * var(--nav-inset-mobile)));
   pointer-events: auto;
@@ -383,10 +454,11 @@
 /* < 1100: drop optional context; < 744: brand + utility islands only, the rest moves into the menu */
 @container lg-navbar (max-width: 1099px) { .lg-nav-optional { display: none !important; } }
 @container lg-navbar (max-width: 743px) {
-  .lg-navbar__row { margin: calc(var(--nav-inset-mobile) + env(safe-area-inset-top, 0px)) calc(var(--nav-inset-mobile) + env(safe-area-inset-right, 0px)) 0 calc(var(--nav-inset-mobile) + env(safe-area-inset-left, 0px)); gap: var(--space-8); }
+  .lg-navbar__row, .lg-navbar__menu, .lg-navbar .lg-scroll-edge { --lg-nav-inset: var(--nav-inset-mobile); --lg-nav-bottom: calc(var(--lg-nav-inset) + env(safe-area-inset-top, 0px) + var(--lg-nav-block)); }
+  .lg-navbar__row { margin: calc(var(--lg-nav-inset) + env(safe-area-inset-top, 0px)) calc(var(--nav-inset-mobile) + env(safe-area-inset-right, 0px)) 0 calc(var(--nav-inset-mobile) + env(safe-area-inset-left, 0px)); gap: var(--space-8); }
   .lg-nav-desktop { display: none !important; }
   .lg-navbar__menu-toggle { display: inline-flex !important; }
-  .lg-navbar__menu { top: calc(var(--nav-inset-mobile) + var(--nav-height) + var(--space-8)); right: var(--nav-inset-mobile); width: calc(100% - 2 * var(--nav-inset-mobile)); }
+  .lg-navbar__menu { right: var(--nav-inset-mobile); width: calc(100% - 2 * var(--nav-inset-mobile)); }
 }
 @container lg-navbar (min-width: 744px) { .lg-nav-mobile { display: none !important; } }
 
@@ -424,7 +496,7 @@
   min-width: 0;
   border-radius: var(--radius-capsule);
   color: var(--ink-muted);
-  font: 600 10.5px/14px var(--font-sans);
+  font: var(--type-tab);
   text-decoration: none;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
@@ -442,11 +514,10 @@
 .lg-tabbar .lg-scroll-edge { position: fixed; z-index: -1; }
 .lg-tabbar--contained .lg-scroll-edge { position: absolute; left: calc(-1 * var(--nav-inset-mobile)); right: calc(-1 * var(--nav-inset-mobile)); bottom: calc(-1 * var(--nav-inset-mobile)); }
 [data-scrolled] > .lg-scroll-edge--bottom { opacity: 1; }
-/* minimized while scrolling down: only the current tab remains, icon only */
+/* minimized while scrolling down: shorter and icons only, but every destination stays one tap away */
 .lg-tabbar[data-minimized] .lg-tabbar__tabs { flex: 0 0 auto; height: var(--tabbar-height-min); }
-.lg-tabbar[data-minimized] .lg-tabbar__tab:not([aria-current="page"]) { display: none; }
-.lg-tabbar[data-minimized] .lg-tabbar__tab { width: calc(var(--tabbar-height-min) - 8px); flex: none; }
-/* minimized: hide the label visually only, so the current tab keeps its accessible name */
+.lg-tabbar[data-minimized] .lg-tabbar__tab { flex: none; min-width: var(--target-min); padding: 0 var(--space-6); }
+/* minimized: hide the labels visually only, so every tab keeps its accessible name */
 .lg-tabbar[data-minimized] .lg-tabbar__tab span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .lg-tabbar[data-minimized] .lg-tabbar__search { width: var(--tabbar-height-min); height: var(--tabbar-height-min); }
 .lg-tabbar[data-minimized] { justify-content: space-between; }
@@ -468,19 +539,30 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-4);
-  height: var(--toolbar-height);
+  min-height: var(--toolbar-height);
   padding: 0 var(--space-6);
   border-radius: var(--radius-capsule);
 }
 .lg-toolbar__group--readout { padding-right: var(--space-12); gap: var(--space-8); }
 .lg-toolbar__group:not(:has(> :not([hidden]))) { display: none; }
 .lg-toolbar > .lg-btn--accent { --lg-h: var(--toolbar-height); --lg-px: var(--space-20); }
-.lg-toolbar__text { padding: 0 var(--space-4); font: 500 12.5px/16px var(--font-mono); }
-.lg-toolbar__text small { font-size: inherit; opacity: 0.6; }
+.lg-toolbar__text { padding: 0 var(--space-4); font: var(--type-mono-label); font-variant-numeric: tabular-nums; }
+/* secondary text is a proved muted ink, never opacity (opacity drops it below 4.5:1 on media) */
+.lg-toolbar__text small { font: inherit; color: var(--ink-muted); }
+.lg-glass--media .lg-toolbar__text small, .lg-stage .lg-toolbar__text small { color: var(--ink-on-media-muted); }
 .lg-toolbar--float { position: fixed; left: 0; right: 0; bottom: calc(var(--space-16) + max(env(safe-area-inset-bottom, 0px), var(--lg-keyboard-inset, 0px))); z-index: var(--z-nav); width: fit-content; margin-inline: auto; }
-.lg-scrub { flex: none; width: var(--lg-scrub-w, 150px); height: 16px; display: flex; align-items: center; cursor: pointer; }
+/* .lg-scrub (span, role="progressbar") only shows progress. To seek, use the native range variant:
+   <input class="lg-scrub lg-scrub--input" type="range" aria-valuetext="0:13 of 0:47">; bundle.js keeps --lg-value in sync. */
+.lg-scrub { flex: none; width: var(--lg-scrub-w, 150px); height: 16px; display: flex; align-items: center; }
 .lg-scrub > span { display: block; width: 100%; height: 4px; border-radius: 9px; background: rgba(255, 255, 255, 0.2); overflow: hidden; }
 .lg-scrub > span > span { display: block; height: 100%; width: var(--lg-value, 0%); background: var(--ink-on-media); }
+input.lg-scrub--input { -webkit-appearance: none; appearance: none; height: 24px; margin: 0; padding: 0; background: transparent; cursor: pointer; border-radius: 9px; }
+input.lg-scrub--input::-webkit-slider-runnable-track { height: 4px; border-radius: 9px; background: linear-gradient(var(--ink-on-media), var(--ink-on-media)) 0 / var(--lg-value, 0%) 100% no-repeat, rgba(255, 255, 255, 0.2); }
+input.lg-scrub--input::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -5px; border: 0; border-radius: 50%; background: var(--ink-on-media); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35); }
+input.lg-scrub--input::-moz-range-track { height: 4px; border-radius: 9px; background: rgba(255, 255, 255, 0.2); }
+input.lg-scrub--input::-moz-range-progress { height: 4px; border-radius: 9px; background: var(--ink-on-media); }
+input.lg-scrub--input::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--ink-on-media); }
+input.lg-scrub--input:focus-visible { outline: var(--focus-width) solid var(--focus); outline-offset: var(--focus-gap); }
 
 .lg-composer {
   box-sizing: border-box;
@@ -488,7 +570,7 @@
   align-items: center;
   gap: var(--space-10);
   width: min(var(--composer-max), 100%);
-  height: var(--control-xl);
+  min-height: var(--control-xl);
   padding: 0 var(--space-6) 0 var(--space-16);
   border-radius: var(--radius-capsule);
 }
@@ -496,13 +578,24 @@
   flex: 1;
   min-width: 0;
   height: 100%;
+  min-height: var(--control-lg);
   border: 0;
   background: transparent;
   color: var(--ink);
-  font: 400 14px/20px var(--font-sans);
+  font: var(--type-body);
 }
 .lg-composer__input::placeholder { color: var(--ink-muted); opacity: 1; }
-.lg-composer__hint { flex: none; color: var(--ink-muted); font: 400 11px/14px var(--font-mono); }
+/* the hint shows a registered shortcut only: Composer() writes it, so an unbound hint stays empty and hidden */
+.lg-composer__hint { flex: none; color: var(--ink-muted); font: var(--type-mono-sm); }
+.lg-composer__hint:empty { display: none; }
+/* no hover usually means no hardware keyboard: a shortcut hint would only take space from the input */
+@media (hover: none) { .lg-composer__hint { display: none; } }
+/* host-owned async state: Composer().setStatus("pending" | "error", message) */
+.lg-composer__status { flex: none; max-width: 40%; color: var(--ink-muted); font: var(--type-caption); }
+.lg-composer__status:empty { display: none; }
+.lg-composer[data-state="error"] { flex-wrap: wrap; row-gap: 0; border-radius: var(--radius-2xl); }
+.lg-composer[data-state="error"] .lg-composer__status { order: 10; flex-basis: 100%; max-width: none; padding: 0 0 var(--space-10); color: var(--danger); font-weight: 600; }
+.lg-composer[data-state="pending"] .lg-composer__input { color: var(--ink-muted); }
 .lg-composer .lg-btn { --lg-h: 38px; --lg-px: var(--space-20); }
 /* the accent appears only when there is something to send */
 .lg-composer .lg-btn--accent:is(:disabled, [aria-disabled="true"]) { --lg-bg: var(--fill); --lg-fg: var(--ink); }
@@ -525,12 +618,12 @@
 .lg-panel--rail { gap: var(--space-16); padding: var(--space-12); }
 .lg-panel__title { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4) var(--space-8) 0; }
 .lg-panel__title > :first-child { margin: 0; }
-.lg-panel__title > p { margin: 0; color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+.lg-panel__title > p { margin: 0; color: var(--ink-muted); font: var(--type-caption); }
 .lg-panel__section { display: flex; flex-direction: column; gap: var(--space-6); }
 .lg-panel__head { display: flex; align-items: baseline; gap: var(--space-8); padding: 0 var(--space-4); }
-.lg-panel__head > :first-child { margin: 0; font: 600 14px/20px var(--font-sans); }
-.lg-panel__count { font: 400 12px/16px var(--font-mono); color: var(--ink-muted); }
-.lg-panel__label { padding: 0 var(--space-8) var(--space-4); color: var(--ink-muted); font: 600 12px/16px var(--font-sans); }
+.lg-panel__head > :first-child { margin: 0; font: var(--type-body-strong); }
+.lg-panel__count { font: var(--type-mono); color: var(--ink-muted); }
+.lg-panel__label { padding: 0 var(--space-8) var(--space-4); color: var(--ink-muted); font: var(--type-label-sm); }
 .lg-panel__group {
   display: flex;
   flex-direction: column;
@@ -559,7 +652,7 @@
 }
 .lg-menu--sm { width: var(--menu-width-sm); }
 .lg-menu[hidden] { display: none; }
-.lg-menu__label { padding: var(--space-6) var(--space-10) var(--space-4); color: var(--ink-muted); font: 600 12px/16px var(--font-sans); }
+.lg-menu__label { padding: var(--space-6) var(--space-10) var(--space-4); color: var(--ink-muted); font: var(--type-label-sm); }
 .lg-menu__item .lg-icon { color: currentColor; }
 .lg-menu__sep { height: 1px; margin: var(--space-4) var(--space-12); background: var(--line); }
 .lg-menu__item {
@@ -573,24 +666,25 @@
   border-radius: var(--radius-lg);
   background: transparent;
   color: var(--ink);
-  font: 400 14px/20px var(--font-sans);
-  text-align: left;
+  font: var(--type-body);
+  text-align: start;
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
 }
 @media (hover: hover) { .lg-menu__item:is(:hover, [data-state="hover"]):not([aria-disabled="true"]) { background: var(--fill); } }
-.lg-menu__item:is(:active, [data-state="active"]) { background: var(--fill-pressed); }
+.lg-menu__item:is(:active, [data-state="active"]):not([aria-disabled="true"]) { background: var(--fill-pressed); }
 .lg-menu__item[aria-current="page"] { background: var(--fill); font-weight: 600; }
 .lg-menu__item--danger { color: var(--danger); }
+.lg-menu__item--danger:is(:active, [data-state="active"]):not([aria-disabled="true"]) { color: var(--danger-strong); }
 .lg-menu__item[aria-disabled="true"] { opacity: var(--opacity-disabled); cursor: default; }
 .lg-menu__confirm { display: flex; flex-direction: column; gap: var(--space-12); padding: var(--space-10) var(--space-10) var(--space-6); white-space: normal; }
-.lg-menu__confirm > b { font: 600 14px/20px var(--font-sans); }
-.lg-menu__confirm > p { margin: 0; color: var(--ink-muted); font-size: 13px; line-height: 19px; text-wrap: pretty; }
+.lg-menu__confirm > b { font: var(--type-body-strong); }
+.lg-menu__confirm > p { margin: 0; color: var(--ink-muted); font: var(--type-callout); text-wrap: pretty; }
 .lg-menu__confirm > div { display: flex; justify-content: flex-end; gap: var(--space-8); }
 .lg-menu__status { display: flex; align-items: center; gap: var(--space-10); padding: var(--space-8) var(--space-10); border-radius: var(--radius-md); }
 .lg-menu__status > span:last-child { display: flex; flex-direction: column; min-width: 0; }
-.lg-menu__status small { color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+.lg-menu__status small { color: var(--ink-muted); font: var(--type-caption); }
 
 .lg-toast {
   position: fixed;
@@ -598,14 +692,33 @@
   left: 50%;
   z-index: var(--z-toast);
   transform: translateX(-50%);
-  max-width: min(560px, 90vw);
+  display: flex;
+  align-items: center;
+  gap: var(--space-10);
+  max-width: min(560px, calc(100vw - 2 * var(--space-16)));
   padding: 9px var(--space-16);
   border-radius: var(--radius-capsule);
-  font-size: 13px;
-  line-height: 18px;
+  font: var(--type-callout);
   text-wrap: pretty;
 }
+.lg-toast[hidden] { display: none; }
+.lg-toast:has(.lg-toast__action) { padding-right: var(--space-6); }
 .lg-toast--contained { position: absolute; }
+/* inside an open modal the toast sits in the top layer with it, at the same place on screen */
+dialog > .lg-toast { position: fixed; }
+
+/* tooltip: [data-tooltip] on icon-only controls (bundle.js); never the only place a name or shortcut lives */
+.lg-tooltip {
+  position: fixed;
+  z-index: var(--z-toast);
+  max-width: min(280px, calc(100vw - 16px));
+  padding: var(--space-4) var(--space-10);
+  border-radius: var(--radius-md);
+  font: var(--type-caption);
+  white-space: normal;
+  pointer-events: auto;
+}
+.lg-tooltip[hidden] { display: none; }
 
 /* ---------- 10. Modal: a bottom sheet (native <dialog>) ----------
    Partial-height sheets are thick Liquid Glass inset from the edges so content peeks around them;
@@ -634,14 +747,17 @@
 .lg-modal::backdrop { background: var(--scrim); }
 .lg-modal__grabber { flex: none; align-self: center; width: 36px; height: 5px; margin-top: var(--space-8); border-radius: 9px; background: var(--line); }
 .lg-modal__header { flex: none; display: flex; align-items: center; gap: var(--space-12); padding: var(--space-10) var(--space-20) 0; }
-.lg-modal__title { flex: 1; min-width: 0; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* titles wrap: a cut-off title hides what the sheet is about */
+.lg-modal__title { flex: 1; min-width: 0; margin: 0; overflow-wrap: anywhere; text-wrap: balance; }
 .lg-modal__body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-16) var(--space-20); }
 .lg-modal__body > p { margin: 0 0 var(--space-12); color: var(--ink-muted); }
 .lg-modal__footer { flex: none; display: flex; align-items: center; gap: var(--space-12); padding: var(--space-8) var(--space-20) var(--space-20); }
-.lg-modal__hint { flex: 1; min-width: 0; color: var(--ink-muted); font-size: 12.5px; line-height: 18px; text-wrap: pretty; }
+.lg-modal__hint { flex: 1; min-width: 0; color: var(--ink-muted); font: var(--type-footnote); text-wrap: pretty; }
 .lg-modal__footer .lg-btn--accent { --lg-h: var(--control-lg); --lg-px: 22px; }
 :root:has(dialog.lg-modal[open]) { overflow: hidden; }
 .lg-modal--static { position: relative; inset: auto; margin: 0; }
+/* centred dialog for short decisions on wide screens; it stays a bottom sheet below 744px */
+@media (min-width: 744px) { .lg-modal--center { margin: auto; } }
 @media (max-width: 743px) {
   .lg-modal, .lg-modal--compact { width: calc(100% - 2 * var(--nav-inset-mobile)); margin-bottom: calc(var(--nav-inset-mobile) + env(safe-area-inset-bottom, 0px)); }
   .lg-modal__footer { flex-direction: column; align-items: stretch; }
@@ -658,7 +774,7 @@
 @keyframes lg-sheet-in { from { opacity: 0; transform: translateY(28px); } }
 @keyframes lg-menu-in { from { opacity: 0; transform: scale(0.9); } }
 @keyframes lg-spin { to { transform: rotate(360deg); } }
-@keyframes lg-pulse { 50% { opacity: 0.4; transform: scale(0.7); } }
+@keyframes lg-pulse { 50% { opacity: 0.4; scale: 0.7; } }
 
 /* ---------- 11. Patterns ---------- */
 .lg-row {
@@ -677,7 +793,9 @@
   cursor: pointer;
 }
 @media (hover: hover) { .lg-row:is(:hover, [data-state="hover"]) { background: var(--fill); } }
-.lg-row:is([aria-selected="true"], [aria-current="true"], .is-selected) { background: var(--accent-soft); }
+/* a row is chosen (aria-selected inside a listbox), current (aria-current) or pressed (aria-pressed toggle) */
+.lg-row:is([aria-selected="true"], [aria-current="true"], [aria-current="page"], [aria-pressed="true"], .is-selected) { background: var(--accent-soft); }
+.lg-list { display: flex; flex-direction: column; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .lg-row--static { cursor: default; }
 @media (hover: hover) { .lg-row--static:hover { background: transparent; } }
 .lg-row__thumb { flex: none; width: 76px; height: 46px; border-radius: var(--radius-sm); background: var(--stage) center / cover no-repeat; position: relative; }
@@ -685,11 +803,12 @@
 .lg-row__thumb--md { width: 68px; height: 40px; border-radius: 9px; }
 .lg-row__thumb > .lg-dot { position: absolute; right: 5px; top: 5px; }
 .lg-row__text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.lg-row__title { display: flex; align-items: center; gap: var(--space-6); font: 600 13px/18px var(--font-sans); }
-.lg-row__title > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.lg-row__sub { color: var(--ink-muted); font-size: 12px; line-height: 16px; text-wrap: pretty; }
+.lg-row__title { display: flex; align-items: center; gap: var(--space-6); font: var(--type-label); }
+/* long titles get two lines before they are clamped; the full title stays in the accessible name */
+.lg-row__title > span:first-child { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+.lg-row__sub { color: var(--ink-muted); font: var(--type-caption); text-wrap: pretty; }
 .lg-row__chev { flex: none; width: 14px; height: 14px; color: var(--ink-faint); }
-.lg-row__meta { flex: none; color: var(--ink-muted); font-size: 12px; }
+.lg-row__meta { flex: none; color: var(--ink-muted); font: var(--type-caption); }
 .lg-callout {
   display: flex;
   flex-direction: column;
@@ -700,9 +819,9 @@
 }
 .lg-callout--lg { padding: var(--space-14) var(--space-16); border-radius: var(--radius-xl); }
 .lg-callout--warn { background: var(--warn-soft); }
-.lg-callout__eyebrow { color: var(--ink-muted); font-size: 12px; line-height: 16px; }
+.lg-callout__eyebrow { color: var(--ink-muted); font: var(--type-caption); }
 .lg-callout--warn .lg-callout__eyebrow { color: var(--warn); font-weight: 600; }
-.lg-callout > p { margin: 0; font-size: 13px; line-height: 19px; text-wrap: pretty; }
+.lg-callout > p { margin: 0; font: var(--type-callout); text-wrap: pretty; }
 .lg-callout__actions { display: flex; gap: var(--space-6); flex-wrap: wrap; }
 .lg-progress { display: block; height: 3px; border-radius: 9px; background: var(--line); overflow: hidden; }
 .lg-progress--md { height: 4px; }
@@ -714,13 +833,15 @@
 .lg-input {
   box-sizing: border-box;
   width: 100%;
-  height: 46px;
+  min-height: 46px;
   padding: 0 var(--space-20);
   border: 0;
   border-radius: var(--radius-capsule);
   background: var(--surface-inset);
+  /* a visible 3:1 boundary before focus (WCAG 1.4.11): people must find the field before they can use it */
+  box-shadow: inset 0 0 0 var(--border-hairline) var(--field-edge);
   color: var(--ink);
-  font: 400 15px/22px var(--font-sans);
+  font: var(--type-body-lg);
 }
 .lg-textarea {
   box-sizing: border-box;
@@ -729,14 +850,21 @@
   border: 0;
   border-radius: var(--radius-xl);
   background: var(--surface-inset);
+  box-shadow: inset 0 0 0 var(--border-hairline) var(--field-edge);
   color: var(--ink);
-  font: 400 15px/22px var(--font-sans);
+  font: var(--type-body-lg);
   resize: vertical;
 }
 :is(.lg-input, .lg-textarea)::placeholder { color: var(--ink-muted); opacity: 1; }
-:is(.lg-input, .lg-textarea)[aria-invalid="true"] { box-shadow: inset 0 0 0 var(--border-hairline) var(--danger); }
+@media (hover: hover) { :is(.lg-input, .lg-textarea):hover:not(:disabled, :focus) { box-shadow: inset 0 0 0 var(--border-hairline) var(--ink-muted); } }
+:is(.lg-input, .lg-textarea)[aria-invalid="true"] { box-shadow: inset 0 0 0 var(--border-strong, 2px) var(--danger); }
+:is(.lg-input, .lg-textarea):disabled { opacity: var(--opacity-disabled); cursor: default; }
+.lg-field { display: flex; flex-direction: column; gap: var(--space-6); }
+.lg-field__label { font: var(--type-label); }
+.lg-field__help { color: var(--ink-muted); font: var(--type-caption); }
+.lg-field__error { color: var(--danger); font: var(--type-label-sm); }
 .lg-chips { display: flex; flex-wrap: wrap; gap: var(--space-6); }
-.lg-chip { height: 30px; padding: 0 var(--space-12); border: 0; border-radius: var(--radius-capsule); background: var(--fill); color: var(--ink-muted); font: 400 12.5px/18px var(--font-sans); cursor: pointer; }
+.lg-chip { position: relative; min-height: 30px; padding: 0 var(--space-12); border: 0; border-radius: var(--radius-capsule); background: var(--fill); color: var(--ink-muted); font: var(--type-footnote); cursor: pointer; }
 @media (hover: hover) { .lg-chip:hover { color: var(--ink); } }
 .lg-chip[aria-pressed="true"] { background: var(--ink); color: var(--canvas); font-weight: 600; }
 .lg-add-tile {
@@ -749,7 +877,7 @@
   border-radius: var(--radius-xl);
   background: transparent;
   color: var(--ink-muted);
-  font: 600 13px/18px var(--font-sans);
+  font: var(--type-label);
   cursor: pointer;
 }
 @media (hover: hover) { .lg-add-tile:hover { border-color: var(--accent); color: var(--ink); } }
@@ -763,10 +891,12 @@
   border-radius: 50% 50% 50% 4px;
   background: var(--accent);
   color: var(--on-accent);
-  font: 700 12px/1 var(--font-sans);
+  font: var(--type-label-sm);
+  font-weight: 700;
+  line-height: 1;
   box-shadow: var(--elevation-pin);
 }
-.lg-pin--sm { width: 22px; height: 22px; border-radius: 50% 50% 50% 3px; font-size: 11px; box-shadow: none; }
+.lg-pin--sm { width: 22px; height: 22px; border-radius: 50% 50% 50% 3px; font: var(--type-micro); line-height: 1; box-shadow: none; }
 .lg-pin--done { background: var(--surface-inset); color: var(--ink-muted); }
 .lg-stage .lg-pin--done { background: rgba(255, 255, 255, 0.88); color: var(--stage); }
 .lg-issue { position: absolute; width: 56px; height: 56px; margin: -28px 0 0 -28px; border-radius: 50%; border: 2px dashed var(--media-warn); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25); pointer-events: none; }
@@ -785,6 +915,45 @@
 }
 .lg-spinner { display: block; width: 28px; height: 28px; border-radius: 50%; border: 2.5px solid rgba(255, 255, 255, 0.22); border-top-color: var(--ink-on-media); animation: lg-spin 0.9s linear infinite; }
 
+/* ---------- 11b. AppShell: one fluid layout from 320px to wide desktop ----------
+   .lg-app holds the navbar, .lg-app__body (the content grid) and the tab bar. The grid is a size container,
+   so columns follow the space the app really has:
+     ≥ 1100  aside | main | inspector     744–1099  compact aside | main, inspector below main
+     < 744   one column; the aside becomes a horizontal dock that scrolls on its own, the tab bar appears
+   Nothing is hidden by width: a task that leaves the screen moves to a menu or a tab, never away.
+   .lg-app--contained: an app inside a pane (a preview, an embed): its navigation mode follows its own width. */
+.lg-app { position: relative; min-height: 100dvh; padding: var(--content-top) 0 var(--space-24); }
+.lg-app--contained { container: lg-app / inline-size; min-height: 0; }
+.lg-app__body { container: lg-app-body / inline-size; padding-inline: max(var(--space-16), env(safe-area-inset-left, 0px)) max(var(--space-16), env(safe-area-inset-right, 0px)); }
+.lg-app__grid { display: grid; grid-template-columns: minmax(0, var(--lg-aside-w, 260px)) minmax(0, 1fr) minmax(0, var(--lg-inspector-w, 300px)); gap: var(--space-16); align-items: start; }
+.lg-app__aside, .lg-app__main, .lg-app__inspector { min-width: 0; display: flex; flex-direction: column; gap: var(--space-16); }
+/* side columns stay in view and scroll on their own when taller than the window */
+.lg-app__aside, .lg-app__inspector { position: sticky; top: var(--content-top); max-height: calc(100dvh - var(--content-top) - var(--space-16)); overflow-y: auto; overscroll-behavior: contain; }
+.lg-app__dock { display: flex; flex-direction: column; gap: var(--space-6); }
+@container lg-app-body (max-width: 1099px) {
+  .lg-app__grid { grid-template-columns: minmax(0, var(--lg-aside-w-compact, 200px)) minmax(0, 1fr); }
+  .lg-app__inspector { grid-column: 2; position: static; max-height: none; overflow: visible; }
+}
+@container lg-app-body (max-width: 743px) {
+  .lg-app__grid { grid-template-columns: minmax(0, 1fr); }
+  .lg-app__aside, .lg-app__inspector { grid-column: 1; position: static; max-height: none; overflow: visible; }
+  /* local horizontal scroll: the page itself never scrolls sideways */
+  .lg-app__dock { flex-direction: row; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; padding-bottom: var(--space-4); }
+  .lg-app__dock > * { flex: none; scroll-snap-align: start; }
+}
+@media (max-width: 743px) {
+  /* room for the floating tab bar, so the last block can scroll above it */
+  .lg-app:has(> .lg-tabbar) { padding-bottom: calc(var(--tabbar-height) + 2 * var(--nav-inset-mobile) + env(safe-area-inset-bottom, 0px) + var(--space-16)); }
+}
+@container lg-app (max-width: 743px) {
+  .lg-app--contained .lg-tabbar--contained { display: flex; }
+  .lg-app:has(> .lg-tabbar) { padding-bottom: calc(var(--tabbar-height) + 2 * var(--nav-inset-mobile) + var(--space-16)); }
+}
+@container lg-app (min-width: 744px) {
+  .lg-tabbar--contained { display: none; }
+  .lg-nav-mobile { display: none !important; }
+}
+
 /* ---------- 12. Motion: only when the user has not asked for less ---------- */
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion="reduce"]) .lg-btn { transition-property: background-color, --lg-state, color, filter, box-shadow, transform; transition-duration: var(--duration-fast); }
@@ -802,19 +971,36 @@
 @media (prefers-reduced-motion: reduce) { .lg-spinner { animation-duration: 2.4s; } }
 :root[data-motion="reduce"] .lg-spinner { animation-duration: 2.4s; }
 
-/* ---------- 13. Touch: 44px targets ---------- */
+/* ---------- 13. Touch: 44px targets ----------
+   Two layers. (pointer: coarse) — the main pointer is a finger: controls grow visually.
+   (any-pointer: coarse) — a finger may be used (a laptop with a touch screen): every small control gets an
+   invisible ::before that extends its hit area to 44 × 44 without changing the layout. */
 @media (pointer: coarse) {
   .lg-btn:not(.lg-btn--lg) { min-height: var(--target-min); }
   .lg-btn--icon:not(.lg-btn--lg) { min-width: var(--target-min); }
-  .lg-navbar__island { height: calc(var(--target-min) + 10px); }
   .lg-navbar__island .lg-segmented { --lg-seg-h: calc(var(--target-min) - 6px); }
-  .lg-navbar__row > .lg-btn { --lg-h: calc(var(--target-min) + 10px); }
   .lg-navbar__island .lg-btn { --lg-h: var(--target-min); }
+  .lg-navbar__brand { min-height: var(--target-min); }
   .lg-segmented { --lg-seg-h: calc(var(--target-min) - 6px); }
+  .lg-segmented__item { min-width: var(--target-min); }
   .lg-menu__item { min-height: var(--target-min); }
-  .lg-toolbar__group { height: calc(var(--target-min) + 12px); }
+  .lg-chip { min-height: 36px; }
+  .lg-toolbar__group { min-height: calc(var(--target-min) + 12px); }
+  input.lg-scrub--input { height: var(--target-min); }
   .lg-tabbar[data-minimized] .lg-tabbar__tabs, .lg-tabbar[data-minimized] .lg-tabbar__search { height: calc(var(--target-min) + 8px); }
   .lg-tabbar[data-minimized] .lg-tabbar__search { width: calc(var(--target-min) + 8px); }
+}
+@media (any-pointer: coarse) {
+  :is(.lg-btn, .lg-segmented__item, .lg-chip, .lg-navbar__brand, .lg-tabbar__tab, .lg-row__action)::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--target-min));
+    height: max(100%, var(--target-min));
+    transform: translate(-50%, -50%);
+  }
+  .lg-tabbar__tab { position: relative; }
 }
 
 /* ---------- 14. Modes & fallbacks ---------- */
@@ -863,6 +1049,12 @@
   .lg-extend { display: none; }
   .lg-segmented__item:is([aria-checked="true"], [aria-selected="true"], [aria-current="page"]) { color: HighlightText; }
   .lg-stage::after { display: none; }
+  .lg-dot { forced-color-adjust: none; border-color: CanvasText; }
+  :is(.lg-dot--ok, .lg-dot--accent, .lg-dot--warn) { background: CanvasText; }
+  .lg-frame:is([aria-selected="true"], [aria-current="true"], [aria-pressed="true"], .is-selected)::after { box-shadow: inset 0 0 0 3px Highlight; }
+  .lg-frame:is([aria-selected="true"], [aria-current="true"], [aria-pressed="true"], .is-selected)::before { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  :is(.lg-input, .lg-textarea) { border: 1px solid CanvasText; }
+  .lg-tooltip { border: 1px solid CanvasText; }
   :is(.lg-btn, .lg-navbar__link, .lg-navbar__brand, .lg-segmented__item, .lg-row, .lg-menu__item, .lg-focusable):focus-visible { outline: 2px solid Highlight; }
 }
 @media print {

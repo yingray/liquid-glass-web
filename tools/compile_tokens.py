@@ -28,10 +28,23 @@ for fam in ['spacing','radius','blur','glass','border','opacity','duration','eas
     for tok in t[fam]['tokens']: lines.append(f'  --{tok["name"]}: {tok["value"]};')
 for k,v in t['type']['families'].items(): lines.append(f'  --font-{k}: {v};')
 out.append(':root {\n'+'\n'.join(lines)+'\n}')
+# type roles: each text style is also a --type-<name> font shorthand, so components follow the density.
+# Compact is the default; comfortable applies below 744px (unless data-density="compact") or under data-density="comfortable".
+def shorthand(s, fam, size, lh):
+    return f'{s["fontWeight"]} {size}/{lh} var(--font-{fam})'
+compact, comfy = [], []
 for g in t['type']['groups']:
     for s in g['styles']:
         fam=s.get('family',g['family'])
-        d=[f'font-family: var(--font-{fam})',f'font-size: {s["fontSize"]}',f'line-height: {s["lineHeight"]}',f'font-weight: {s["fontWeight"]}']
+        compact.append(f'  --type-{s["name"]}: {shorthand(s, fam, s["fontSize"], s["lineHeight"])};')
+        c=s.get('comfortable')
+        if c: comfy.append(f'  --type-{s["name"]}: {shorthand(s, fam, c["fontSize"], c["lineHeight"])};')
+out.append(':root, [data-density="compact"] {\n'+'\n'.join(compact)+'\n}')
+out.append('[data-density="comfortable"] {\n'+'\n'.join(comfy)+'\n}')
+out.append('@media (max-width: 743px) {\n  :root:not([data-density="compact"]) {\n'+'\n'.join('  '+x for x in comfy)+'\n  }\n}')
+for g in t['type']['groups']:
+    for s in g['styles']:
+        d=[f'font: var(--type-{s["name"]})']
         if 'letterSpacing' in s: d.append(f'letter-spacing: {s["letterSpacing"]}')
         out.append(f'.{s["name"]} {{ '+'; '.join(d)+'; }')
 open(sys.argv[1],'w').write('\n'.join(out)+'\n'); print('ok')

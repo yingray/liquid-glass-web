@@ -48,9 +48,9 @@ const context = (
 
 const tools = (
   <>
-    <GlassButton variant="plain" iconOnly className="lg-nav-desktop" aria-label="Search" title="Search (⌘F)" icon={searchIcon} />
-    <GlassButton variant="plain" className="lg-nav-desktop" aria-label="Queue, 2 items" title="Queue" style={{ ['--lg-px' as string]: '8px' }} icon={queueIcon}>
-      <span className="lg-badge lg-badge--sm lg-badge--count">2</span>
+    <GlassButton variant="plain" iconOnly className="lg-nav-desktop" aria-label="Search" tooltip icon={searchIcon} />
+    <GlassButton variant="plain" className="lg-nav-desktop" aria-label="Queue, 2 running" tooltip="Queue" style={{ ['--lg-px' as string]: '8px' }} icon={queueIcon}>
+      <span className="lg-badge lg-badge--sm lg-badge--count" aria-hidden="true">2</span>
     </GlassButton>
   </>
 );
@@ -72,8 +72,8 @@ function Navbar({ scrolled }: { scrolled?: boolean }) {
       brandLabel="Lumen home"
       links={['Studio', 'Library', 'Shows']}
       context={context}
-      tabs={<SegmentedControl mode="tabs" label="Project area" items={['Picks', { label: 'Sources', badge: 3, badgeWarn: true }]} />}
-      action={<GlassButton variant="accent">Export</GlassButton>}
+      tabs={<SegmentedControl mode="tabs" label="Project area" items={[{ label: 'Picks', value: 'picks' }, { label: 'Sources', value: 'sources', badge: 3, badgeWarn: true, badgeLabel: '3 pending' }]} />}
+      action={<GlassButton variant="glass" aria-label="Export Island Light">Export</GlassButton>}
       tools={tools}
       menu={menu}
     />

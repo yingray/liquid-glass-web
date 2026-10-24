@@ -46,12 +46,12 @@ export function WithLabelAndToolbar() {
       bottom={
         <Toolbar label="Playback">
           <Toolbar.Group readout media>
-            <GlassButton variant="media-solid" iconOnly aria-label="Play (Space)" title="Play (Space)" icon={<PlayIcon />} />
+            <GlassButton variant="media-solid" iconOnly aria-label="Play" tooltip icon={<PlayIcon />} />
             <Toolbar.Text total="0:47">0:13</Toolbar.Text>
           </Toolbar.Group>
           <GlassButton variant="accent">Review 4 Candidates</GlassButton>
           <Toolbar.Group media>
-            <GlassButton variant="plain" iconOnly aria-label="Add Note" title="Add Note (P)" icon={<NoteIcon />} />
+            <GlassButton variant="plain" iconOnly aria-label="Add Note" tooltip icon={<NoteIcon />} />
             <GlassButton variant="plain" iconOnly aria-label="Share" icon={<ShareIcon />} />
           </Toolbar.Group>
         </Toolbar>
@@ -82,7 +82,7 @@ export function NoScrim() {
     <Stage media={photo} noScrim style={{ height: 180, display: 'grid', placeItems: 'center' }}>
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 12 }}>
         <GlassButton variant="media" iconOnly aria-label="Previous Frame" icon={<PrevIcon />} />
-        <GlassButton variant="media-solid" iconOnly aria-label="Play (Space)" title="Play (Space)" icon={<PlayIcon />} />
+        <GlassButton variant="media-solid" iconOnly aria-label="Play" tooltip icon={<PlayIcon />} />
         <GlassButton variant="media" iconOnly aria-label="Next Frame" icon={<NextIcon />} />
       </div>
     </Stage>

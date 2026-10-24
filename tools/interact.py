@@ -125,7 +125,7 @@ with sync_playwright() as p:
     ok(sr[0] and sr[1]==56, f'search is a separate trailing circle ({sr})')
     pg.mouse.wheel(0,600); pg.wait_for_timeout(600)
     ok(pg.evaluate(f'{tbar}.hasAttribute("data-minimized")'),'tab bar minimizes on scroll down')
-    w=pg.evaluate('Math.round(document.querySelector(".lg-tabbar__tabs").getBoundingClientRect().width)'); ok(w<=48, f'minimized tabs collapse to the current tab ({w}px)')
+    mt=pg.evaluate('[...document.querySelectorAll(".lg-tabbar__tab")].map(t=>Math.round(t.getBoundingClientRect().width))'); ok(len(mt)>=3 and all(x>=44 for x in mt), f'minimized: every tab stays, icon only, each ≥ 44 wide ({mt})')
     pg.mouse.wheel(0,-200); pg.wait_for_timeout(250)
     ok(not pg.evaluate(f'{tbar}.hasAttribute("data-minimized")'),'tab bar expands on scroll up')
     pg.mouse.wheel(0,600); pg.wait_for_timeout(250); pg.focus('.lg-tabbar__tab[aria-current]')
@@ -142,7 +142,7 @@ with sync_playwright() as p:
     c=pg.evaluate('getComputedStyle(document.querySelector(".lg-progress--neutral > span")).backgroundColor')
     ok(c=='rgb(238, 235, 244)', f'neutral progress in the nav is ink, not accent ({c})')
     acc=pg.evaluate('[...document.querySelectorAll(".lg-btn--accent")].filter(b=>b.offsetParent && !b.disabled).map(b=>b.textContent.trim())')
-    ok(len(acc)==2, f'one accent in the nav + one on screen ({acc})')
+    ok(acc==['Review 4 Candidates'], f'review screen: one accent, the review action; Export is glass ({acc})')
     snd=pg.evaluate('getComputedStyle(document.querySelector(".lg-composer button[type=submit]")).backgroundColor')
     ok(snd!='rgb(167, 139, 250)', f'empty composer: Send is not an accent fill ({snd})')
     ok(pg.evaluate('getComputedStyle(document.querySelector(".sc-dock")).backdropFilter')=='none' and not pg.evaluate('document.querySelector(".sc-dock").matches(".lg-glass")'),'contact sheet dock is content: opaque surface, not glass')
@@ -183,7 +183,7 @@ with sync_playwright() as p:
         pg.close()
     ok(not bad, f'320–1920: no horizontal scroll; tab bar only < 744, top links only ≥ 744 ({bad})')
     import re as _re
-    for comp in ('FloatingNavbar','GlassButton','SegmentedControl','Toolbar','GlassPanel','Modal','Patterns','Materials','ShowcaseDesktop','ShowcaseMobile','Cover'):
+    for comp in ('FloatingNavbar','GlassButton','SegmentedControl','Toolbar','GlassPanel','Modal','Patterns','Materials','ShowcaseDesktop','ShowcaseMobile','Cover','AppShell'):
         _m=_re.search(r'width=(\d+)', open(_os.path.join(DS,'components',comp,'preview.html')).readline()); wd=int(_m.group(1)) if _m else 1200
         pg=b.new_page(viewport={'width':wd,'height':900}); load(pg,comp)
         sw=pg.evaluate('document.documentElement.scrollWidth'); ok(sw<=wd, f'{comp} card fits its width ({sw} ≤ {wd})'); pg.close()

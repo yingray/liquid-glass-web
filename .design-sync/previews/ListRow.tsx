@@ -1,4 +1,4 @@
-import { Badge, ListRow } from 'liquid-glass-web-react';
+import { Badge, ListRow, SelectList } from 'liquid-glass-web-react';
 
 const thumb = (h1: number, h2: number, h3: number, x: number) =>
   `radial-gradient(34% 46% at ${x}% 40%, hsl(${h1} 70% 78% / .92) 0%, transparent 70%), radial-gradient(52% 60% at 80% 74%, hsl(${h2} 55% 42%) 0%, transparent 72%), radial-gradient(24% 26% at 72% 20%, hsl(${h3} 60% 86% / .55) 0%, transparent 70%), linear-gradient(165deg, hsl(${h1} 35% 26%) 0%, hsl(${h2} 30% 9%) 100%)`;
@@ -8,14 +8,15 @@ const glass = { padding: 6, borderRadius: 28, display: 'grid', gap: 4, maxWidth:
 export function Versions() {
   return (
     <div style={{ padding: 16 }}>
-      <div className="lg-glass lg-glass--flat" style={glass}>
-        <ListRow thumbSize="md" thumb={thumb(28, 68, 228, 52)} title={<span className="mono-label">#1</span>} subtitle="The sky is blown out; the cloud detail is gone." />
+      <SelectList label="Versions of Frame 14" className="lg-glass lg-glass--flat" style={glass}>
+        <ListRow value="v1" thumbSize="md" thumb={thumb(28, 68, 228, 52)} title={<span className="mono-label">#1</span>} subtitle="The sky is blown out; the cloud detail is gone." />
         <ListRow
           thumbSize="md"
           thumb={thumb(300, 340, 140, 44)}
           title={<span className="mono-label">#2</span>}
           badge={<Badge variant="accent" size="sm">Recommended</Badge>}
           subtitle="Best tonal range; matches Frame 13."
+          value="v2"
           selected
         />
         <ListRow
@@ -24,8 +25,9 @@ export function Versions() {
           title={<span className="mono-label">#3</span>}
           badge={<Badge variant="outline-warn" size="sm">Flagged</Badge>}
           subtitle="Flare at bottom left."
+          value="v3"
         />
-      </div>
+      </SelectList>
     </div>
   );
 }

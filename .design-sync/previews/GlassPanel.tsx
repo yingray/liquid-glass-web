@@ -51,7 +51,7 @@ export function WithFooter() {
       <GlassPanel label="Library" rail style={{ maxWidth: 300 }}>
         <GlassPanel.Section title="Scenes" count={4}>
           <ListRow thumbSize="sm" thumb={thumb(300, 340, 140, 44)} title="After Rain" subtitle="12 photos" />
-          <ListRow thumbSize="sm" thumb={thumb(160, 200, 20, 40)} title="Island Light" subtitle="48 photos" selected />
+          <ListRow thumbSize="sm" thumb={thumb(160, 200, 20, 40)} title="Island Light" subtitle="48 photos" current />
           <ListRow thumbSize="sm" thumb={thumb(28, 68, 228, 52)} title="Harbor" subtitle="2 angles missing" />
         </GlassPanel.Section>
         <GlassPanel.Footer>

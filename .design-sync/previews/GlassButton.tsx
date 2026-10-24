@@ -115,7 +115,7 @@ export function OnTheStage() {
     <Stage media={photo} noScrim style={{ height: 150, display: 'grid', placeItems: 'center' }}>
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 12 }}>
         <GlassButton variant="media" iconOnly aria-label="Previous Frame" icon={<PrevIcon />} />
-        <GlassButton variant="media-solid" iconOnly aria-label="Play (Space)" title="Play (Space)" icon={<PlayIcon />} />
+        <GlassButton variant="media-solid" iconOnly aria-label="Play" tooltip icon={<PlayIcon />} />
         <GlassButton variant="media" iconOnly aria-label="Next Frame" icon={<NextIcon />} />
         <GlassButton variant="glass-media" size="sm">
           Add Angle

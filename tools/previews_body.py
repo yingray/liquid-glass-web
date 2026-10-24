@@ -4,9 +4,13 @@
 # ======================================================================
 def navbar(menu_id='nav-menu', scrolled=False, menu_open=False, toast=None):
     sc = ' data-scrolled data-scroll-manual' if scrolled else ''
-    # the menu holds secondary items only: the main destinations live in the top islands (≥ 744) or the tab bar (< 744)
+    # Main destinations live in the top islands (≥ 744) or the tab bar (< 744). Below 744 the project scope
+    # (its areas, Export, Queue) moves into the menu, in its own group, so no task disappears with the islands.
+    project = [('check', 'Picks'), ('folder', 'Sources · 3 Pending'), ('share', 'Export “Island Light”'), ('list', 'Queue · 2 Running')]
     items = [('clock', 'Activity'), ('gear', 'Settings')]
-    menu_items = ''.join(f'<a class="lg-menu__item" href="#">{icon(ic)}{t}</a>' for ic, t in items)
+    menu_items = (''.join(f'<a class="lg-menu__item lg-nav-mobile" href="#">{icon(ic)}{t}</a>' for ic, t in project)
+                  + '<div class="lg-menu__sep lg-nav-mobile" role="separator"></div>'
+                  + ''.join(f'<a class="lg-menu__item" href="#">{icon(ic)}{t}</a>' for ic, t in items))
     return f"""<header class="lg-navbar lg-navbar--contained"{sc} data-lg="navbar">
   <div class="lg-scroll-edge" aria-hidden="true"></div>
   <div class="lg-navbar__row">
@@ -14,20 +18,20 @@ def navbar(menu_id='nav-menu', scrolled=False, menu_open=False, toast=None):
       {BRAND}
       <span class="lg-nav-desktop">{nav_links(NAV_DEST)}</span>
     </div>
-    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract>
+    <div class="lg-navbar__island lg-navbar__island--text lg-glass lg-nav-desktop" data-refract role="group" aria-label="Project Island Light">
       <span class="lg-navbar__crumb lg-nav-optional"><a href="#">Shows</a><span class="lg-navbar__crumb-sep">/</span></span>
       <b style="font-weight:600">Island Light</b>
       <span class="lg-progress lg-progress--md lg-progress--neutral lg-nav-optional" style="width:52px;--lg-value:38%"><span></span></span>
       <span class="mono lg-muted lg-nav-optional">18 / 48 selected</span>
     </div>
     <div class="lg-navbar__island lg-navbar__island--tight lg-glass lg-nav-desktop">
-      {seg(['Picks', 'Sources'], 0, label='Project area', role='tablist', badge=(1, 3))}
+      {seg(['Picks', 'Sources'], 0, label='Project area', role='tablist', badge=(1, 3), values=['picks', 'sources'])}
     </div>
-    <button class="lg-btn lg-btn--accent lg-nav-desktop" type="button">Export</button>
+    <button class="lg-btn lg-glass lg-nav-desktop" type="button" aria-label="Export Island Light">{icon('share')}Export</button>
     <span class="lg-navbar__spacer"></span>
     <div class="lg-navbar__island lg-navbar__island--tight lg-glass" data-refract>
-      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" title="Search (⌘F)">{icon('search')}</button>
-      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 items" title="Queue" style="--lg-px:8px">{icon('list')}<span class="lg-badge lg-badge--sm lg-badge--count">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" data-tooltip>{icon('search')}</button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 running" data-tooltip="Queue" style="--lg-px:8px">{icon('list')}<span class="lg-badge lg-badge--sm lg-badge--count" aria-hidden="true">2</span></button>
       <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="{'true' if menu_open else 'false'}" aria-controls="{menu_id}">{icon('close' if menu_open else 'menu')}</button>
     </div>
   </div>
@@ -54,29 +58,32 @@ def content_cards(n=8, top=0):
     return f'<div class="nv-cards" style="top:{top}px">{cards}</div>'
 
 
-def composer(value='', scope='@all', ph='Tell the assistant how to adjust these photos…', flat=False):
+def composer(value='', scope='@all', ph='Tell the assistant how to adjust these photos…', flat=False, shortcut=False, scope_label='All frames'):
+    # an instruction field for the assistant, not site search: no role="search". The ⌘K / Ctrl K hint is written
+    # by Composer() only when data-shortcut is set (one composer per page owns the shortcut).
     dis = '' if value else ' disabled'
     v = f' value="{value}"' if value else ''
     f = ' lg-glass--flat' if flat else ''
-    return f"""<form class="lg-composer lg-glass{f}" onsubmit="event.preventDefault()" role="search" aria-label="Instructions for the assistant">
+    sc = ' data-shortcut="k"' if shortcut else ''
+    return f"""<form class="lg-composer lg-glass{f}" onsubmit="event.preventDefault()" aria-label="Instructions for the assistant" data-lg="composer"{sc}>
   <span class="lg-dot lg-dot--lg lg-dot--accent" aria-hidden="true"></span>
-  <span class="lg-badge lg-badge--mono" style="height:24px">{scope}</span>
+  <span class="lg-badge lg-badge--mono"><span class="lg-sr-only">Scope: {scope_label}, </span><span aria-hidden="true">{scope}</span></span>
   <input class="lg-composer__input" type="text" placeholder="{ph}" aria-label="Instructions for the assistant"{v}>
-  <span class="lg-composer__hint" aria-hidden="true">⌘K</span>
+  <span class="lg-composer__hint" aria-hidden="true"></span>
   <button class="lg-btn lg-btn--accent" type="submit"{dis}>Send</button>
 </form>"""
 
 
-def media_toolbar(label='Play', first=('play', 'Play (Space)'), readout='0:13<small> / 0:47</small>', action='Review 4 Candidates'):
+def media_toolbar(label='Play', first=('play', 'Play'), readout='0:13<small> / 0:47</small>', action='Review 4 Candidates'):
     return f"""<div class="lg-toolbar" role="toolbar" aria-label="{label}" data-lg="toolbar">
   <div class="lg-toolbar__group lg-toolbar__group--readout lg-glass lg-glass--media lg-glass--elevated">
-    <button class="lg-btn lg-btn--media-solid lg-btn--icon" type="button" aria-label="{first[1]}" title="{first[1]}">{icon(first[0], 12)}</button>
+    <button class="lg-btn lg-btn--media-solid lg-btn--icon" type="button" aria-label="{first[1]}" data-tooltip>{icon(first[0], 12)}</button>
     <span class="lg-toolbar__text">{readout}</span>
   </div>
   <button class="lg-btn lg-btn--accent" type="button">{action}</button>
   <div class="lg-toolbar__group lg-glass lg-glass--media lg-glass--elevated">
-    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Add Note" title="Add Note (P)" aria-pressed="false">{icon('pin')}</button>
-    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Share" title="Share">{icon('share')}</button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Add Note" data-tooltip aria-pressed="false">{icon('pin')}</button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Share" data-tooltip>{icon('share')}</button>
   </div>
 </div>"""
 
@@ -100,13 +107,14 @@ NAV_CSS = """
   .nv-mid { width: 980px; height: 120px; }
   .nv-phones { display: flex; gap: 24px; align-items: flex-start; }
   .nv-phone { width: 390px; height: 560px; border-radius: 40px; }
+  .nv-phone .lg-navbar__menu { max-height: 400px; overflow-y: auto; }
   .nv-phone .nv-cards { grid-template-columns: 1fr 1fr; left: 16px; right: 16px; }
   .nv-hero { position: absolute; inset: 0; border-radius: 0; }
   .nv-phone figcaption { margin: 0 0 8px; }
 """
 body = f"""<main class="d lg-root">
 <section>
-  <h2 class="d-h">Desktop 1440 (scaled): brand + app switcher, project context and tools each get their own island; the primary action “Export” stands outside the islands. The tools island holds icons only</h2>
+  <h2 class="d-h">Desktop 1440 (scaled): grouped by scope. Global (brand + app switcher) · project (name, its areas, and “Export” next to them, so it is clear what is exported) · tools (icons only, each with a tooltip). In a review screen the accent belongs to the review action, so Export stays glass</h2>
   <div class="d-frame nv-1440">{navbar('m1')}<div style="position:absolute;left:20px;right:20px;top:68px;bottom:-40px">{content_cards(4, 0)}</div></div>
 </section>
 <section>
@@ -120,9 +128,9 @@ body = f"""<main class="d lg-root">
 <section>
   <h2 class="d-h">Mobile 390: only brand and menu at the top; main tabs move to the bottom tab bar, with search as a separate circle at the trailing end</h2>
   <div class="nv-phones">
-    <div><p class="d-cap" style="margin:0 0 8px">① Top of the page</p><div class="d-frame nv-phone"><div class="lg-stage lg-stage--no-scrim nv-hero" data-surface-tone="dark"><div class="lg-stage__media" style="{bg(2)}"></div></div>{navbar('m4')}{tabbar(TABS_SITE)}</div></div>
-    <div><p class="d-cap" style="margin:0 0 8px">② Scrolled down: the tab bar shrinks to the current tab, with scroll edges top and bottom</p><div class="d-frame nv-phone">{content_cards(8, 40)}{navbar('m5', scrolled=True)}{tabbar(TABS_SITE, 0, minimized=True, scrolled=True)}</div></div>
-    <div><p class="d-cap" style="margin:0 0 8px">③ Menu: secondary items only, each with an icon</p><div class="d-frame nv-phone">{content_cards(8, 70)}{navbar('m6', scrolled=True, menu_open=True)}{tabbar(TABS_SITE, 0, scrolled=True)}</div></div>
+    <div><p class="d-cap" style="margin:0 0 8px">① Top of the page</p><div class="d-frame nv-phone" data-density="comfortable"><div class="lg-stage lg-stage--no-scrim nv-hero" data-surface-tone="dark"><div class="lg-stage__media" style="{bg(2)}"></div></div>{navbar('m4')}{tabbar(TABS_SITE)}</div></div>
+    <div><p class="d-cap" style="margin:0 0 8px">② Scrolled down: the tab bar gets shorter and drops its labels, but every tab stays one tap away; scroll edges top and bottom</p><div class="d-frame nv-phone" data-density="comfortable">{content_cards(8, 40)}{navbar('m5', scrolled=True)}{tabbar(TABS_SITE, 0, minimized=True, scrolled=True)}</div></div>
+    <div><p class="d-cap" style="margin:0 0 8px">③ Menu: the project scope (areas, Export, Queue) in one group, secondary items in another</p><div class="d-frame nv-phone" data-density="comfortable">{content_cards(8, 70)}{navbar('m6', scrolled=True, menu_open=True)}{tabbar(TABS_SITE, 0, scrolled=True)}</div></div>
   </div>
 </section>
 </main>"""
@@ -169,7 +177,7 @@ body = f"""<main class="d lg-root">
 </section>
 <section>
   <h2 class="d-h">Buttons on the stage (data-tone="dark", identical in every theme)</h2>
-  <div class="lg-stage bt-stage" data-tone="dark"><div class="lg-stage__media" style="{bg(4)}"></div>
+  <div class="lg-stage bt-stage" data-tone="dark" data-scrim="both"><div class="lg-stage__media" style="{bg(4)}"></div>
     <div class="bt-grid" style="position:relative;padding:10px 16px"><span></span><div class="bt-head">{heads}</div>{media_rows}</div>
   </div>
 </section>
@@ -220,8 +228,8 @@ body = f"""<main class="d lg-root">
   </section>
 </div>
 <section>
-  <h2 class="d-h">On the stage: lg-segmented--media (white thumb, dark text); right, the glass thumb while pressed</h2>
-  <div class="lg-stage" data-tone="dark" style="height:150px;display:grid;place-items:center"><div class="lg-stage__media" style="{bg(7)}"></div>
+  <h2 class="d-h">On the stage: lg-segmented--media (white thumb, dark text); right, while pressed the thumb turns into a dark plate and the label flips to white</h2>
+  <div class="lg-stage" data-tone="dark" data-scrim="both" style="height:150px;display:grid;place-items:center"><div class="lg-stage__media" style="{bg(7)}"></div>
     <div class="d-row" style="position:relative">{seg(['Single', 'Side by Side', 'Grid', 'Swipe'], 2, label='Compare mode (stage)', cls=' lg-segmented--media')}{seg(['Fit', '2×', '4×'], 1, label='Zoom (stage, pressed)', cls=' lg-segmented--media', extra=' data-pressed')}</div>
   </div>
 </section>
@@ -243,16 +251,16 @@ TB_CSS = """
 """
 review_tb = f"""<div class="lg-toolbar" role="toolbar" aria-label="Compare playback" data-lg="toolbar">
   <div class="lg-toolbar__group lg-toolbar__group--readout lg-glass lg-glass--media lg-glass--elevated">
-    <button class="lg-btn lg-btn--media-solid lg-btn--icon" type="button" aria-label="Pause (Space)" title="Pause (Space)">{icon('pause', 12)}</button>
-    <span class="lg-toolbar__text">0:01 / 0:05</span>
-    <span class="lg-scrub" style="--lg-value:22%"><span><span></span></span></span>
+    <button class="lg-btn lg-btn--media-solid lg-btn--icon" type="button" aria-label="Pause" data-tooltip>{icon('pause', 12)}</button>
+    <span class="lg-toolbar__text">0:01<small> / 0:05</small></span>
+    <input class="lg-scrub lg-scrub--input" type="range" min="0" max="50" value="11" aria-label="Playback position" aria-valuetext="0:01 of 0:05">
   </div>
   <div class="lg-toolbar__group lg-glass lg-glass--media lg-glass--elevated">{seg(['Fit', '2×', '4×'], 0, label='Zoom', cls=' lg-segmented--media lg-segmented--sm')}</div>
 </div>"""
 canvas_tb = f"""<div class="lg-toolbar" role="toolbar" aria-label="Edit" data-lg="toolbar">
   <div class="lg-toolbar__group lg-glass">
-    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Undo" title="Undo (⌘Z)">{icon('undo')}</button>
-    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Redo" title="Redo (⇧⌘Z)">{icon('redo')}</button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Undo" data-tooltip>{icon('undo')}</button>
+    <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Redo" data-tooltip>{icon('redo')}</button>
   </div>
   <div class="lg-toolbar__group lg-glass">
     <button class="lg-btn lg-btn--plain lg-btn--icon" type="button" aria-label="Compare" aria-pressed="true">{icon('compare')}</button>
@@ -277,16 +285,16 @@ body = f"""<main class="d lg-root">
   </div>
 </section>
 <section>
-  <h2 class="d-h">For review: playback and timeline in one group, zoom in another. Shortcuts live in title and aria-label, not in the toolbar</h2>
+  <h2 class="d-h">For review: playback and a seek bar (a native range) in one group, zoom in another. Icon-only buttons show their name in a tooltip; a shortcut appears only when the app registers it (aria-keyshortcuts)</h2>
   <div class="lg-stage tb-review" data-tone="dark"><div class="lg-stage__media" style="{bg(8)}"></div><div class="lg-stage__bottom">{review_tb}</div></div>
 </section>
 <section class="d-frame tb-canvas">
   <h2 class="d-h" style="margin:0">On canvas: Undo + Redo, view (“Compare” on, “Adjust” disabled), Share + More — three groups, one glass background each</h2>
   {canvas_tb}
   {wrong}
-  <h2 class="d-h" style="margin:6px 0 0">Composer: “Send” is disabled while empty and enabled once there is text</h2>
-  {composer()}
-  {composer('Match the white balance of Frames 12–18 to dusk', scope='@12–18')}
+  <h2 class="d-h" style="margin:6px 0 0">Composer: “Send” is enabled only while there is text; the ⌘K / Ctrl K hint appears because this composer registers the shortcut. Pending and error states come from Composer().setStatus()</h2>
+  {composer(shortcut=True)}
+  {composer('Match the white balance of Frames 12–18 to dusk', scope='@12–18', scope_label='Frames 12 to 18')}
 </section>
 </main>"""
 write('Toolbar', page('<!-- @dsCard group="Navigation" height=1040 width=1040 subtitle="Grouped glass toolbars and the composer" -->', 'Toolbar — preview', body, TB_CSS))
@@ -317,11 +325,19 @@ need_rows = ''.join(f"""<button class="lg-row" type="button"><span class="lg-row
                     for i, (t, s) in enumerate([('Frame 14 · Forest', '4 versions · Pick #2'), ('Frame 17 · Harbor', '3 versions · Pick #1'), ('Frame 21 · After Rain', '4 versions · Pick #2')]))
 notes = ''.join(f"""<button class="lg-row" type="button" style="align-items:flex-start;padding:8px 10px"><span class="lg-pin lg-pin--sm{' lg-pin--done' if d else ''}">{n}</span><span class="lg-row__text"><span style="font-size:13px;line-height:19px"><b class="mono-label" style="margin-right:6px">#{sh}</b>{t}</span><span class="lg-row__sub" style="color:var({'--ink-muted' if d else '--accent-text'})">{st}</span></span></button>"""
                 for n, sh, t, st, d in [(3, 21, 'Don’t brighten the sky further', 'Done', True), (2, 17, 'Keep the person at bottom right', 'Processing', False), (1, 14, 'Keep grain in the shadows', 'Done', True)])
+notes14 = notes.split('</button>')[2] + '</button>'
 acts = ''.join(f'<div class="pn-act"><time>{t}</time><span><b>{w}</b> {x}</span></div>' for t, w, x in [('2 min', 'Assistant', 'made 3 versions of Frame 17.'), ('6 min', 'Assistant', 'reworked Frame 21 per note 3.'), ('9 min', 'You', 'chose #1 for Frame 12.')])
 
 
 def inspector(cls='pn-aside'):
+    # two scopes, top to bottom: the selected frame (what the stage shows), then the whole project
     return f"""<aside class="lg-panel lg-glass lg-glass--flat {cls}" aria-label="Inspector">
+  <div class="lg-panel__title"><span class="lg-navbar__scope">Selection</span><h2 class="title-3">Frame 14 · Forest</h2><p>Undecided · Pick #2 of 4 versions</p></div>
+  <section class="lg-panel__section" aria-label="Notes on Frame 14">
+    <div class="lg-panel__head"><h3>Notes on Frame 14</h3><span class="lg-panel__count">1</span></div>
+    {notes14}
+  </section>
+  <div class="lg-panel__title"><span class="lg-navbar__scope">Project</span><h2 class="title-3">Island Light</h2></div>
   <div class="lg-panel__group">
     <div class="lg-panel__head"><h3>Needs Your Decision</h3><span class="lg-panel__count">3</span></div>
     {need_rows}
@@ -337,7 +353,7 @@ def inspector(cls='pn-aside'):
     <div class="pn-work"><div><b>Frame 15 · Color Correction</b><span>2 / 5 · about 40 s</span></div><span class="lg-progress" style="--lg-value:44%"><span></span></span></div>
   </section>
   <section class="lg-panel__section">
-    <div class="lg-panel__head"><h3>Notes</h3><span class="lg-panel__count">3</span></div>
+    <div class="lg-panel__head"><h3>All Notes</h3><span class="lg-panel__count">3</span></div>
     {notes}
   </section>
   <section class="lg-panel__section">
@@ -350,6 +366,7 @@ def inspector(cls='pn-aside'):
 menu_list = f"""<div class="lg-menu lg-menu--sm lg-glass lg-glass--popover" role="menu" aria-label="Frame 14">
   <button class="lg-menu__item" type="button" role="menuitem">{icon('expand')}View Larger</button>
   <button class="lg-menu__item" type="button" role="menuitem" data-state="hover">{icon('swap')}Replace Image</button>
+  <button class="lg-menu__item" type="button" role="menuitem" aria-disabled="true">{icon('stack')}Add to Wall 3</button>
   <div class="lg-menu__sep" role="separator"></div>
   <button class="lg-menu__item lg-menu__item--danger" type="button" role="menuitem">{icon('trash')}Remove from Show</button>
 </div>"""
@@ -374,7 +391,7 @@ body = f"""<main class="d lg-root">
 <div class="pn-wrap">
   <section><h2 class="d-h">Inspector (sidebar): fixed on the canvas with nothing passing behind it, so it uses lg-glass--flat (no backdrop blur); 6px inset, group radius 22 concentric with the panel’s 28</h2>{inspector()}</section>
   <div class="pn-side">
-    <section><h2 class="d-h">Menu: thick glass (glass-thick), common actions with icons, the destructive action set apart by a separator</h2>
+    <section><h2 class="d-h">Menu: thick glass (glass-thick); icons are consistent within a group; a disabled item stays focusable but never runs; the destructive action is set apart by a separator. Arrow keys, Home, End and typing move between items</h2>
       <div class="pn-stack">{menu_list}{anchored}</div>
       <p class="d-cap" style="margin-top:10px">Right: grows out of the card’s “More” button and confirms inline instead of opening a dialog; the cards underneath stay clickable.</p>
     </section>
@@ -437,13 +454,18 @@ under = ''.join(f'<span style="{bg(i)}"></span>' for i in range(8))
 body = f"""<main class="d lg-root">
 <div class="d-row" style="justify-content:space-between">
   <p class="d-cap">A half-height sheet is thick glass, inset from the screen edges so the content beneath shows around it; expanded to full height it turns opaque so people can focus on the task. The live demo uses a native &lt;dialog&gt;.</p>
-  <button class="lg-btn lg-btn--accent" type="button" data-lg-open="#live-sheet">Open Live Demo</button>
+  <span class="d-row" style="gap:8px"><button class="lg-btn lg-btn--tinted" type="button" data-lg-open="#live-center">Open Centered Dialog</button><button class="lg-btn lg-btn--accent" type="button" data-lg-open="#live-sheet">Open Live Demo</button></span>
 </div>
 <div class="d-row" style="align-items:flex-start;gap:24px;flex-wrap:nowrap">
   <section style="flex:1;min-width:0"><h2 class="d-h">Desktop: half height, thick glass (glass-thick)</h2><div class="d-frame md-desk"><div class="md-under">{under}</div><div class="md-scrim"></div><div class="md-anchor">{sheet()}</div></div></section>
   <section><h2 class="d-h">Mobile 390: expanded to full height (data-expanded): opaque surface, meets the screen edges</h2><div class="d-frame md-phone"><div class="md-under">{under}</div><div class="md-scrim"></div><div class="md-anchor">{sheet(mobile=True, expanded=True)}</div></div></section>
 </div>
 {sheet(live=True)}
+<dialog class="lg-modal lg-modal--compact lg-modal--center" id="live-center" aria-labelledby="lc-t" data-lg="modal">
+  <div class="lg-modal__header" style="padding-top:var(--space-20)"><h2 class="lg-modal__title title-3" id="lc-t">Replace the Locked Angle of “Harbor”?</h2></div>
+  <div class="lg-modal__body"><p>Versions that follow the locked angle stay as they are. New versions use “Harbor · Backlit”.</p></div>
+  <div class="lg-modal__footer"><span class="lg-spacer"></span><button class="lg-btn lg-btn--tinted" type="button" data-lg-close="cancel">Cancel</button><button class="lg-btn lg-btn--accent" type="button" data-lg-close="replace">Replace Angle</button></div>
+</dialog>
 </main>"""
 write('Modal', page('<!-- @dsCard group="Overlays" height=940 width=1340 subtitle="Sheet: glass at half height, opaque at full height" -->', 'Modal — preview', body, MODAL_CSS))
 
@@ -462,18 +484,27 @@ PAT_CSS = """
   .pt-frames .lg-frame .lg-badge--accent { left: auto; right: 10px; box-shadow: var(--elevation-pin); }
   .pt-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .pt-tiles > * { aspect-ratio: 16 / 10; }
+  .pt-card .lg-stage__media[role="img"] { left: 50%; right: auto; width: 84px; transform: translateX(-50%); }
 """
 rows3 = ''.join([
-    f'<button class="lg-row" type="button"><span class="lg-row__thumb lg-row__thumb--md" style="{bg(1)}"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#1</span></span><span class="lg-row__sub">The sky is blown out; the cloud detail is gone.</span></span></button>',
-    f'<button class="lg-row" type="button" aria-selected="true"><span class="lg-row__thumb lg-row__thumb--md" style="{bg(2)}"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#2</span><span class="lg-badge lg-badge--sm lg-badge--accent">Recommended</span></span><span class="lg-row__sub">Best tonal range; matches Frame 13.</span></span></button>',
-    f'<button class="lg-row" type="button" data-state="hover"><span class="lg-row__thumb lg-row__thumb--md" style="{bg(3)}"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#3</span><span class="lg-badge lg-badge--sm lg-badge--outline-warn">Flagged</span></span><span class="lg-row__sub">Flare at bottom left.</span></span></button>'])
+    f'<div class="lg-row" role="option" aria-selected="false" data-value="v1"><span class="lg-row__thumb lg-row__thumb--md" style="{bg(1)}"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#1</span></span><span class="lg-row__sub">The sky is blown out; the cloud detail is gone.</span></span></div>',
+    f'<div class="lg-row" role="option" aria-selected="true" data-value="v2"><span class="lg-row__thumb lg-row__thumb--md" style="{bg(2)}"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#2</span><span class="lg-badge lg-badge--sm lg-badge--accent">Recommended</span></span><span class="lg-row__sub">Best tonal range; matches Frame 13.</span></span></div>',
+    f'<div class="lg-row" role="option" aria-selected="false" data-value="v3" data-state="hover"><span class="lg-row__thumb lg-row__thumb--md" style="{bg(3)}"></span><span class="lg-row__text"><span class="lg-row__title"><span class="mono-label">#3</span><span class="lg-badge lg-badge--sm lg-badge--outline-warn">Flagged</span></span><span class="lg-row__sub">Flare at bottom left.</span></span></div>'])
+# hard content (UI-49): long German, long Traditional Chinese, RTL, a portrait frame with corner marks
+CORNERS = ("background-image:linear-gradient(135deg,#fff 0 10%,transparent 10%),linear-gradient(225deg,#fff 0 10%,transparent 10%),"
+           "linear-gradient(45deg,#fff 0 10%,transparent 10%),linear-gradient(315deg,#fff 0 10%,transparent 10%),"
+           "linear-gradient(90deg,#000 0 25%,#555 25% 50%,#aaa 50% 75%,#fff 75%)")
+hard_rows = ''.join([
+    '<div class="lg-row lg-row--static"><span class="lg-row__text"><span class="lg-row__title"><span>Farbabgleich der Abendaufnahmen am Hafen nach Rücksprache mit der Kuratorin überarbeiten</span></span><span class="lg-row__sub">Deutsch · long words wrap, the title clamps at two lines</span></span></div>',
+    '<div class="lg-row lg-row--static" lang="zh-Hant"><span class="lg-row__text"><span class="lg-row__title"><span>依策展人回饋重新調整港口黃昏系列的白平衡與暗部顆粒，並保留右下角人物</span></span><span class="lg-row__sub">繁體中文 · 長標題兩行後截斷</span></span></div>',
+    '<div class="lg-row lg-row--static" dir="rtl" lang="ar"><span class="lg-row__text"><span class="lg-row__title"><span>مطابقة توازن اللون الأبيض للإطارات من ١٢ إلى ١٨</span></span><span class="lg-row__sub">العربية · من اليمين إلى اليسار</span></span></div>'])
 body = f"""<main class="d lg-root">
 <div class="pt-grid">
-  <section class="pt-card d-card"><h3>Rows (lg-row)</h3><p class="d-cap">Rest · selected (accent-soft) · hover (fill); row height 58 with roomier padding</p><div class="pt-on-glass lg-glass lg-glass--flat">{rows3}</div></section>
+  <section class="pt-card d-card"><h3>Rows (lg-row) in a list people choose from</h3><p class="d-cap">role="listbox" › role="option": rest · selected (aria-selected, accent-soft) · hover (fill). Arrow keys move and select (data-lg="list")</p><div class="lg-list pt-on-glass lg-glass lg-glass--flat" role="listbox" aria-label="Versions of Frame 14" data-lg="list">{rows3}</div></section>
   <section class="pt-card d-card"><h3>Badges and Status Dots</h3>
     <div class="d-row" style="gap:8px"><span class="lg-badge lg-badge--accent">Recommended</span><span class="lg-badge lg-badge--ok">Chosen</span><span class="lg-badge lg-badge--outline-warn">Flagged</span><span class="lg-badge lg-badge--count">2</span><span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">3</span><span class="lg-badge lg-badge--mono">@12–18</span><span class="lg-badge">Draft</span></div>
     <div class="lg-legend footnote"><span><i class="lg-dot lg-dot--ok"></i>Chosen</span><span><i class="lg-dot lg-dot--accent"></i>Needs You</span><span><i class="lg-dot"></i>Processing</span><span><i class="lg-dot lg-dot--warn"></i>Has Question</span></div>
-    <p class="d-cap" style="margin:0">Status is always a dot plus text, never color alone.</p>
+    <p class="d-cap" style="margin:0">Status is a shape plus text, never color alone: circle, rounded square, hollow ring, diamond.</p>
   </section>
   <section class="pt-card d-card"><h3>Callout</h3>
     <div class="lg-callout lg-callout--lg"><span class="lg-callout__eyebrow">Assistant’s Suggestion</span><b class="title-3" style="font-size:16px;letter-spacing:-.01em">Pick #2</b><p>Best tonal range, and its color temperature matches Frame 13, so it won’t jump out on the wall.</p></div>
@@ -482,21 +513,25 @@ body = f"""<main class="d lg-root">
   <section class="pt-card d-card"><h3>Inputs and Chips</h3>
     <input class="lg-input" type="text" placeholder="Name the angle" aria-label="Angle name">
     <textarea class="lg-textarea" rows="2" placeholder="What should differ from the locked version?" aria-label="Notes"></textarea>
-    <input class="lg-input" type="text" value="H" aria-invalid="true" aria-label="Invalid example" aria-describedby="err1"><span id="err1" class="footnote" style="color:var(--danger);margin-top:-6px">Use at least 2 characters.</span>
+    <div class="lg-field"><label class="lg-field__label" for="f-name">Angle name</label><input id="f-name" class="lg-input" type="text" value="H" aria-invalid="true" aria-describedby="f-help f-err"><span id="f-help" class="lg-field__help">Shown on the wall label.</span><span id="f-err" class="lg-field__error">Use at least 2 characters.</span></div>
     <div class="lg-chips"><button class="lg-chip" type="button">Back</button><button class="lg-chip" type="button" aria-pressed="true">Backlit</button><button class="lg-chip" type="button">Wide</button></div>
   </section>
   <section class="pt-card d-card"><h3>Media Frames, Selection Rings and Plates</h3>
     <div class="pt-frames" data-tone="dark"><div class="lg-frame" style="{bg(5)}"><span class="lg-badge lg-plate">#1</span></div><div class="lg-frame is-selected" style="{bg(6)}"><span class="lg-badge lg-plate">#2</span><span class="lg-badge lg-badge--accent" style="top:auto;bottom:10px">Recommended</span></div></div>
-    <p class="d-cap" style="margin:0">Media frames have no scrim, so numbers use lg-plate (a translucent backing with no blur). Selection ring 3px, inset 3px.</p>
+    <p class="d-cap" style="margin:0">Media frames have no scrim, so numbers use lg-plate (a translucent backing with no blur). Selection is a two-tone inset ring plus a check mark; the outline stays free for keyboard focus.</p>
   </section>
   <section class="pt-card d-card"><h3>Progress, Pins, Add Tiles, Waiting</h3>
     <span class="lg-progress" style="--lg-value:62%"><span></span></span>
     <div class="d-row" style="gap:10px"><span class="lg-pin">2</span><span class="lg-pin lg-pin--sm">3</span><span class="lg-pin lg-pin--sm lg-pin--done">1</span><span class="lg-stage" data-tone="dark" style="width:56px;height:56px;border-radius:16px;display:grid;place-items:center"><span class="lg-spinner" style="width:22px;height:22px"></span></span></div>
     <div class="pt-tiles"><button class="lg-add-tile" type="button">{icon('plus', 20)}Add Angle</button><div class="lg-frame" style="{bg(9)}"></div></div>
   </section>
+  <section class="pt-card d-card"><h3>Hard Content</h3><p class="d-cap">Test material with long words, CJK, RTL and a portrait test chart (contain: all four corners stay visible)</p>
+    <div class="lg-list">{hard_rows}</div>
+    <div class="lg-stage" data-tone="dark" style="height:150px"><div class="lg-stage__media" style="{CORNERS};background-size:auto 100%;background-repeat:no-repeat" role="img" aria-label="Portrait test chart with white corner marks"></div></div>
+  </section>
 </div>
 </main>"""
-write('Patterns', page('<!-- @dsCard group="Showcase" height=820 width=1100 page subtitle="The small parts components are built from: rows, badges, callouts, inputs, media frames" -->', 'Patterns — preview', body, PAT_CSS))
+write('Patterns', page('<!-- @dsCard group="Showcase" height=1180 width=1100 page subtitle="The small parts components are built from: rows, badges, callouts, inputs, media frames" -->', 'Patterns — preview', body, PAT_CSS))
 
 # ======================================================================
 # Materials (page)
@@ -545,10 +580,10 @@ body = f"""<main class="d lg-root">
   </div>
 </section>
 <section>
-  <h2 class="d-h">3 · Glass on the stage: left, scrims off (lg-stage--no-scrim); right, the default top and bottom scrim bands (full strength over the top 64px and bottom 88px). Labels sit inside the bands; captions mid-frame use lg-plate</h2>
+  <h2 class="d-h">3 · Glass on the stage: left, scrims off (lg-stage--no-scrim); right, scrim bands (full strength over the top 64px and bottom 88px, at most a quarter of a short stage each). A band appears only where controls are (.lg-stage__top / __bottom or data-scrim); captions mid-frame use lg-plate</h2>
   <div class="mt-2">
     <div class="lg-stage lg-stage--no-scrim mt-media" data-tone="dark"><div class="lg-stage__media" style="{BRIGHT}"></div><div class="mt-chiprow"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip">Frame 14</span><span class="lg-badge lg-glass lg-glass--media lg-glass--chip" style="font-weight:400;color:var(--ink-on-media-muted)">Forest · Undecided</span></div><span class="lg-badge mt-tag" style="background:var(--danger-fill);color:var(--on-danger)">Don’t</span></div>
-    <div class="lg-stage mt-media" data-tone="dark"><div class="lg-stage__media" style="{BRIGHT}"></div><div class="mt-chiprow"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip">Frame 14</span><span class="lg-badge lg-glass lg-glass--media lg-glass--chip" style="font-weight:400;color:var(--ink-on-media-muted)">Forest · Undecided</span></div><span class="lg-badge lg-plate" style="position:absolute;left:44%;top:46%">Don’t brighten the sky further</span><span class="lg-badge lg-badge--ok mt-tag">Do</span></div>
+    <div class="lg-stage mt-media" data-tone="dark" data-scrim="both"><div class="lg-stage__media" style="{BRIGHT}"></div><div class="mt-chiprow"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip">Frame 14</span><span class="lg-badge lg-glass lg-glass--media lg-glass--chip" style="font-weight:400;color:var(--ink-on-media-muted)">Forest · Undecided</span></div><span class="lg-badge lg-plate" style="position:absolute;left:44%;top:46%">Don’t brighten the sky further</span><span class="lg-badge lg-badge--ok mt-tag">Do</span></div>
   </div>
 </section>
 <section>
@@ -579,8 +614,17 @@ write('Materials', page('<!-- @dsCard group="Showcase" height=1630 width=1240 pa
 # ======================================================================
 # ShowcaseDesktop (1440 × 900 app workspace)
 # ======================================================================
-contact = ''.join(f"""<button class="sc-clip{' is-selected' if i == 3 else ''}" type="button" style="{bg(i)};flex-grow:{g}" aria-label="Frame {i + 11}"><span class="sc-clip__id">{i + 11}</span><span class="lg-dot lg-dot--ring {d}"></span></button>"""
-                  for i, (g, d) in enumerate([(5, 'lg-dot--ok'), (6, 'lg-dot--ok'), (4, 'lg-dot--accent'), (5, 'lg-dot--accent'), (6, 'lg-dot--ok'), (5, 'lg-dot--accent'), (5, ''), (8, 'lg-dot--warn'), (5, 'lg-dot--ok'), (6, '')]))
+STATUS = {'lg-dot--ok': 'Chosen', 'lg-dot--accent': 'Needs You', '': 'Processing', 'lg-dot--warn': 'Has Question'}
+
+
+def clip(i, d, label_id=True):
+    cur = ' aria-current="true"' if i == 3 else ''
+    idl = f'<span class="sc-clip__id" aria-hidden="true">{i + 11}</span>' if label_id else ''
+    return (f'<button class="sc-clip lg-frame" type="button" style="{bg(i)}" aria-label="Frame {i + 11}, {STATUS[d]}"{cur}>'
+            f'{idl}<span class="lg-dot lg-dot--ring {d}" aria-hidden="true"></span></button>')
+
+
+contact = ''.join(clip(i, d) for i, d in enumerate(['lg-dot--ok', 'lg-dot--ok', 'lg-dot--accent', 'lg-dot--accent', 'lg-dot--ok', 'lg-dot--accent', '', 'lg-dot--warn', 'lg-dot--ok', '']))
 SC_CSS = """
   body { overflow: hidden; }
   .sc { position: relative; width: 1440px; height: 900px; display: flex; overflow: hidden; background: var(--canvas); }
@@ -594,10 +638,10 @@ SC_CSS = """
   .sc-dock__head { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--ink-muted); }
   .sc-dock__head b { color: var(--ink); font-size: 13px; font-weight: 600; }
   .sc-strip { display: flex; gap: 3px; height: 62px; }
-  .sc-clip { position: relative; flex: 5 1 0; min-width: 0; padding: 0; border: 0; border-radius: 10px; cursor: pointer; background-size: 130% 130%; background-position: 50% 50%; }
-  .sc-clip.is-selected { outline: 2px solid var(--ink); outline-offset: -2px; }
+  .sc-clip { flex: 1 1 0; min-width: 0; padding: 0; border: 0; border-radius: 10px; cursor: pointer; background-size: cover; background-position: 50% 50%; }
   .sc-clip__id { position: absolute; left: 5px; bottom: 5px; padding: 1px 7px; border-radius: 7px; background: rgba(0,0,0,.55); color: #fff; font: 600 11px/16px var(--font-mono); }
-  .sc-clip .lg-dot { position: absolute; right: 6px; top: 6px; width: 8px; height: 8px; }
+  .sc-clip .lg-dot { position: absolute; left: 6px; top: 6px; width: 8px; height: 8px; }
+  .sc-clip .sc-clip__id, .sc-clip .lg-dot { z-index: 5; }
   .sc-bottom { flex: none; display: flex; justify-content: center; }
   .sc-aside { flex: none; width: 348px; padding: 68px 12px 12px 10px; display: flex; }
   .sc-aside .lg-panel { flex: 1; }
@@ -606,8 +650,8 @@ body = f"""<div class="sc lg-root">
 {navbar('sc-menu')}
 <main class="sc-main">
   <div class="lg-stage sc-stage" data-tone="dark" aria-label="Stage">
-    <div class="lg-stage__media" style="{bg(3)};background-size:130% 130%"></div>
-    <div class="lg-stage__top"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip" style="height:28px;padding:0 12px;font-size:13px">Frame 14 · Forest<span class="lg-dot lg-dot--accent" style="margin-left:6px"></span><span style="font-weight:400">Undecided · Pick #2</span></span></div>
+    <div class="lg-stage__media" style="{bg(3)}"></div>
+    <div class="lg-stage__top"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip" style="min-height:28px;padding:0 12px">Frame 14 · Forest<span class="lg-dot lg-dot--accent" style="margin-left:6px"></span><span style="font-weight:400">Undecided · Pick #2</span></span></div>
     <div class="sc-pin"><span class="lg-pin lg-pin--done">3</span><span class="lg-plate">Don’t brighten the sky further<i>Done</i></span></div>
     <div class="lg-stage__bottom">{media_toolbar(first=('play', 'Slideshow (Space)'), readout='14<small> / 48</small>')}</div>
   </div>
@@ -615,7 +659,7 @@ body = f"""<div class="sc lg-root">
     <div class="sc-dock__head"><b>Contact Sheet</b><span>48 frames · 18 selected</span><span class="lg-spacer"></span><span class="lg-legend"><span><i class="lg-dot lg-dot--ok"></i>Chosen</span><span><i class="lg-dot lg-dot--accent"></i>Needs You</span><span><i class="lg-dot"></i>Processing</span><span><i class="lg-dot lg-dot--warn"></i>Has Question</span></span></div>
     <div class="sc-strip">{contact}</div>
   </section>
-  <div class="sc-bottom">{composer(flat=True)}</div>
+  <div class="sc-bottom">{composer(flat=True, shortcut=True)}</div>
 </main>
 <div class="sc-aside">{inspector('')}</div>
 </div>"""
@@ -653,13 +697,12 @@ ph_tb = f"""<div class="lg-toolbar" role="toolbar" aria-label="View" data-lg="to
   </div>
   <button class="lg-btn lg-btn--accent" type="button">Use #2</button>
 </div>"""
-strip_m = ''.join(f'<button class="sc-clip{" is-selected" if i == 3 else ""}" type="button" style="{bg(i)}" aria-label="Frame {i + 11}"><span class="lg-dot lg-dot--ring {d}"></span></button>'
-                  for i, d in enumerate(['lg-dot--ok', 'lg-dot--ok', 'lg-dot--accent', 'lg-dot--accent', 'lg-dot--ok', 'lg-dot--accent']))
+strip_m = ''.join(clip(i, d, label_id=False) for i, d in enumerate(['lg-dot--ok', 'lg-dot--ok', 'lg-dot--accent', 'lg-dot--accent', 'lg-dot--ok', 'lg-dot--accent']))
 
 
 def ph_frame(extra='', stage_i=3, more_expanded=False, menu_id='ph-mc'):
     exp = f' aria-expanded="true" aria-controls="{menu_id}"' if more_expanded else ' aria-expanded="false"'
-    return f"""<div class="ph">
+    return f"""<div class="ph" data-density="comfortable">
   <div class="ph-main">
     <div class="lg-stage ph-stage" data-tone="dark"><div class="lg-stage__media" style="{bg(stage_i)}"></div>
       <div class="lg-stage__top" style="left:12px;top:12px;right:60px"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip"><span class="lg-dot lg-dot--accent"></span>Frame 14 · Pick #2</span></div>
@@ -684,9 +727,102 @@ need_sheet = f"""<div class="ph-scrim"></div><div class="ph-sheet"><div class="l
 </div></div>"""
 confirm_menu = f'<div class="ph-menu">{menu_confirm.replace("id=\"mc\"", "id=\"ph-mc\"").replace("mc-t", "ph-mc-t")}</div>'
 body = f"""<main class="sm lg-root">
-<figure><figcaption>① Viewing: only brand and menu at the top; the frame-switching controls share one glass group and “Use” stands alone; the composer is the bottom field, so the tab bar drops its search button</figcaption>{ph_frame()}</figure>
+<figure><figcaption>① Viewing: only brand and menu at the top (the menu holds the project scope: Picks, Sources, Export, Queue); the frame-switching controls share one glass group and “Use” stands alone; the composer talks to the assistant, it is not search. Comfortable density</figcaption>{ph_frame()}</figure>
 <figure><figcaption>② The inspector becomes a half-height sheet: thick glass, inset from the edges, with the stage showing beneath</figcaption>{ph_frame(need_sheet, stage_i=5)}</figure>
 <figure><figcaption>③ The menu grows out of the “More” button at the stage’s top right and confirms inline; the rest of the stage stays usable</figcaption>{ph_frame(confirm_menu, stage_i=8, more_expanded=True)}</figure>
 </main>"""
 write('ShowcaseMobile', page('<!-- @dsCard group="Showcase" height=950 width=1330 page subtitle="390: tab bar, grouped stage toolbar, half-height sheet, inline confirmation" -->', 'ShowcaseMobile — preview', body, SM_CSS))
+# ======================================================================
+# AppShell (fluid reference: one page from 320px to 1920px)
+# ======================================================================
+# Desktop → mobile mapping (UI-02), the same markup at every width:
+#   main destinations  : navbar links (≥ 744) → tab bar (< 744)
+#   search             : tools island (≥ 744) → tab bar search circle (< 744)
+#   project + areas    : in-page project header, always visible (name, Picks / Sources tabs, pending count)
+#   export, queue      : header buttons + tools island (≥ 744) → project actions menu in the header (< 744)
+#   contact sheet      : aside column (≥ 744) → horizontal dock that scrolls on its own (< 744)
+#   inspector          : right column (≥ 1100) → below the stage (744–1099) → after the content (< 744)
+AS_CSS = """
+  .as-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); }
+  .as-head__name { display: flex; flex-direction: column; min-width: 0; flex: 1 1 200px; }
+  .as-head__name h1 { margin: 0; overflow-wrap: anywhere; }
+  .as-head__name p { margin: 0; color: var(--ink-muted); font: var(--type-caption); }
+  .as-head__actions { display: flex; gap: var(--space-8); align-items: center; position: relative; }
+  .as-stage { aspect-ratio: 3 / 2; max-height: min(62dvh, 640px); width: 100%; }
+  .as-stage .lg-stage__bottom { left: var(--space-8); right: var(--space-8); bottom: var(--space-12); }
+  .as-stage .lg-toolbar { flex-wrap: wrap; justify-content: center; row-gap: var(--space-8); white-space: normal; }
+  .as-clips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); }
+  .as-clips .sc-clip { flex: none; width: 100%; aspect-ratio: 16 / 10; height: auto; }
+  .as-panel { display: flex; flex-direction: column; gap: var(--space-12); }
+  .as-panel[hidden] { display: none; }
+  .as-sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--space-10); }
+  .as-actions-menu { position: absolute; right: 0; top: calc(100% + var(--space-8)); z-index: var(--z-menu); }
+  .lg-app__inspector .lg-panel { overflow: visible; }
+  @container lg-app-body (max-width: 743px) {
+    .as-clips { display: flex; }
+    .as-clips .sc-clip { width: 96px; }
+    .as-head__actions .as-wide { display: none; }
+  }
+  @container lg-app-body (min-width: 744px) { .as-head__actions .as-narrow { display: none; } }
+  /* narrow stages: the toolbar wraps, so the stage grows to keep it clear of the top label */
+  @container lg-app-body (max-width: 479px) { .as-stage { aspect-ratio: auto; min-height: 320px; } }
+"""
+as_clips = ''.join(clip(i, d) for i, d in enumerate(['lg-dot--ok', 'lg-dot--ok', 'lg-dot--accent', 'lg-dot--accent', 'lg-dot--ok', 'lg-dot--accent', '', 'lg-dot--warn']))
+as_sources = ''.join(f'<div class="lg-frame" style="{bg(i + 4)};aspect-ratio:16/10" role="img" aria-label="Source {n}"></div>' for i, n in enumerate(['Harbor · Dawn', 'Harbor · Backlit', 'Pier Lights']))
+as_nav = f"""<header class="lg-navbar" data-lg="navbar">
+  <div class="lg-scroll-edge" aria-hidden="true"></div>
+  <div class="lg-navbar__row">
+    <div class="lg-navbar__island lg-glass">{BRAND}<span class="lg-nav-desktop">{nav_links(NAV_DEST)}</span></div>
+    <span class="lg-navbar__spacer"></span>
+    <div class="lg-navbar__island lg-navbar__island--tight lg-glass">
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-nav-desktop" type="button" aria-label="Search" data-tooltip data-task="search">{icon('search')}</button>
+      <button class="lg-btn lg-btn--plain lg-nav-desktop" type="button" aria-label="Queue, 2 running" data-tooltip="Queue" data-task="queue" style="--lg-px:8px">{icon('list')}<span class="lg-badge lg-badge--sm lg-badge--count" aria-hidden="true">2</span></button>
+      <button class="lg-btn lg-btn--plain lg-btn--icon lg-navbar__menu-toggle" type="button" aria-label="Menu" aria-expanded="false" aria-controls="as-menu">{icon('menu')}</button>
+    </div>
+  </div>
+  <div class="lg-navbar__menu lg-menu lg-glass lg-glass--popover" id="as-menu" hidden>
+    <a class="lg-menu__item" href="#">{icon('clock')}Activity</a><a class="lg-menu__item" href="#">{icon('gear')}Settings</a>
+  </div>
+</header>"""
+as_head = f"""<div class="as-head" data-task="project">
+  <div class="as-head__name"><span class="lg-navbar__scope">Project</span><h1 class="title-2">Island Light</h1><p>18 / 48 selected · Shows / Island Light</p></div>
+  {seg(['Picks', 'Sources'], 0, label='Project area', role='tablist', badge=(1, 3), values=['picks', 'sources'], controls=['as-picks', 'as-sources'], tasks=['picks', 'sources'])}
+  <div class="as-head__actions">
+    <button class="lg-btn lg-btn--tinted as-wide" type="button" data-task="export" aria-label="Export Island Light">{icon('share')}Export</button>
+    <button class="lg-btn lg-btn--tinted lg-btn--icon as-narrow" type="button" aria-label="Project actions" aria-controls="as-actions" data-task="project-actions" data-tooltip>{icon('more')}</button>
+    <div class="lg-menu lg-menu--sm lg-glass lg-glass--popover as-actions-menu" id="as-actions" role="menu" aria-label="Project actions" hidden data-lg="panel">
+      <button class="lg-menu__item" type="button" role="menuitem" data-task="export">{icon('share')}Export “Island Light”</button>
+      <button class="lg-menu__item" type="button" role="menuitem" data-task="queue">{icon('list')}Queue · 2 Running</button>
+    </div>
+  </div>
+</div>"""
+body = f"""<div class="lg-app lg-root">
+{as_nav}
+<div class="lg-app__body"><div class="lg-app__grid">
+  <aside class="lg-app__aside" aria-label="Contact Sheet">
+    <div class="lg-panel__head"><h2 class="label">Contact Sheet</h2><span class="lg-panel__count">48</span></div>
+    <div class="lg-app__dock as-clips">{as_clips}</div>
+  </aside>
+  <main class="lg-app__main">
+    {as_head}
+    <section class="as-panel" id="as-picks" role="tabpanel" aria-labelledby="as-picks-tab">
+      <div class="lg-stage as-stage" data-tone="dark"><div class="lg-stage__media" style="{bg(3)}"></div>
+        <div class="lg-stage__top"><span class="lg-badge lg-glass lg-glass--media lg-glass--chip"><span class="lg-dot lg-dot--accent" aria-hidden="true"></span>Frame 14 · Undecided</span></div>
+        <div class="lg-stage__bottom">{media_toolbar(first=('play', 'Slideshow'), readout='14<small> / 48</small>', action='Review 4 Candidates')}</div>
+      </div>
+      {composer(flat=True, shortcut=True)}
+    </section>
+    <section class="as-panel" id="as-sources" role="tabpanel" aria-labelledby="as-sources-tab" hidden>
+      <p class="callout" style="margin:0">3 sources need a decision.</p>
+      <div class="as-sources">{as_sources}</div>
+    </section>
+  </main>
+  <div class="lg-app__inspector">{inspector('')}</div>
+</div></div>
+{tabbar(TABS_APP, 0, search=True).replace('lg-tabbar lg-tabbar--contained', 'lg-tabbar').replace('class="lg-tabbar__search lg-glass"', 'class="lg-tabbar__search lg-glass" data-task="search"')}
+</div>"""
+# the contact-sheet clips and inspector parts reuse the showcase styles
+AS_CSS += '\n'.join(l for l in SC_CSS.splitlines() if l.strip().startswith(('.sc-clip', '.pn-')))
+write('AppShell', page('<!-- @dsCard group="Showcase" height=900 width=1440 page subtitle="Fluid reference app: one layout from 320px to 1920px, every task kept" -->', 'AppShell — preview', body, AS_CSS, viewport=True))
+
 print('previews v3 written')

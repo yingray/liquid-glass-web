@@ -81,13 +81,13 @@ export function OnTheStage() {
       bottom={
         <Toolbar label="Playback">
           <Toolbar.Group readout media>
-            <GlassButton variant="media-solid" iconOnly aria-label="Play (Space)" title="Play (Space)" icon={<PlayIcon />} />
+            <GlassButton variant="media-solid" iconOnly aria-label="Play" tooltip icon={<PlayIcon />} />
             <Toolbar.Text total="0:47">0:13</Toolbar.Text>
           </Toolbar.Group>
           <GlassButton variant="accent">Review 4 Candidates</GlassButton>
           <Toolbar.Group media>
-            <GlassButton variant="plain" iconOnly aria-label="Add Note" title="Add Note (P)" defaultPressed={false} icon={<NoteIcon />} />
-            <GlassButton variant="plain" iconOnly aria-label="Share" title="Share" icon={<ShareIcon />} />
+            <GlassButton variant="plain" iconOnly aria-label="Add Note" tooltip defaultPressed={false} icon={<NoteIcon />} />
+            <GlassButton variant="plain" iconOnly aria-label="Share" tooltip icon={<ShareIcon />} />
           </Toolbar.Group>
         </Toolbar>
       }
@@ -103,9 +103,9 @@ export function ReviewWithScrubber() {
       bottom={
         <Toolbar label="Compare playback">
           <Toolbar.Group readout media>
-            <GlassButton variant="media-solid" iconOnly aria-label="Pause (Space)" title="Pause (Space)" icon={<PauseIcon />} />
+            <GlassButton variant="media-solid" iconOnly aria-label="Pause" tooltip icon={<PauseIcon />} />
             <Toolbar.Text>0:01 / 0:05</Toolbar.Text>
-            <Toolbar.Scrubber value={22} />
+            <Toolbar.Scrubber interactive value={22} label="Playback position" valueText="0:01 of 0:05" />
           </Toolbar.Group>
           <Toolbar.Group media>
             <SegmentedControl label="Zoom" items={['Fit', '2×', '4×']} media size="sm" />
@@ -121,8 +121,8 @@ export function OnCanvas() {
     <div style={{ padding: 24, display: 'flex', justifyContent: 'center' }}>
       <Toolbar label="Edit">
         <Toolbar.Group>
-          <GlassButton variant="plain" iconOnly aria-label="Undo" title="Undo (⌘Z)" icon={<UndoIcon />} />
-          <GlassButton variant="plain" iconOnly aria-label="Redo" title="Redo (⇧⌘Z)" icon={<RedoIcon />} />
+          <GlassButton variant="plain" iconOnly aria-label="Undo" tooltip icon={<UndoIcon />} />
+          <GlassButton variant="plain" iconOnly aria-label="Redo" tooltip icon={<RedoIcon />} />
         </Toolbar.Group>
         <Toolbar.Group>
           <GlassButton variant="plain" iconOnly aria-label="Compare" defaultPressed icon={<CompareIcon />} />
@@ -143,8 +143,8 @@ export function WithSpacerAndAction() {
     <div style={{ padding: 24 }}>
       <Toolbar label="Edit" style={{ width: '100%' }}>
         <Toolbar.Group>
-          <GlassButton variant="plain" iconOnly aria-label="Undo" title="Undo (⌘Z)" icon={<UndoIcon />} />
-          <GlassButton variant="plain" iconOnly aria-label="Redo" title="Redo (⇧⌘Z)" icon={<RedoIcon />} />
+          <GlassButton variant="plain" iconOnly aria-label="Undo" tooltip icon={<UndoIcon />} />
+          <GlassButton variant="plain" iconOnly aria-label="Redo" tooltip icon={<RedoIcon />} />
         </Toolbar.Group>
         <Toolbar.Spacer />
         <Toolbar.Group>

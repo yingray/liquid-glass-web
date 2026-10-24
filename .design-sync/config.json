@@ -33,7 +33,9 @@
     "ListRow": "src/index.d.ts",
     "Callout": "src/index.d.ts",
     "ProgressBar": "src/index.d.ts",
-    "Stage": "src/index.d.ts"
+    "Stage": "src/index.d.ts",
+    "SelectList": "src/index.d.ts",
+    "AppShell": "src/index.d.ts"
   },
   "docsMap": {
     "LiquidGlassRoot": "categories/Foundations.md",
@@ -54,7 +56,9 @@
     "ListRow": "categories/Patterns.md",
     "Callout": "categories/Patterns.md",
     "ProgressBar": "categories/Patterns.md",
-    "Stage": "categories/Media.md"
+    "Stage": "categories/Media.md",
+    "SelectList": "categories/Patterns.md",
+    "AppShell": "categories/Foundations.md"
   },
   "overrides": {
     "FloatingNavbar": {
@@ -67,6 +71,9 @@
       "cardMode": "column"
     },
     "Toolbar": {
+      "cardMode": "column"
+    },
+    "AppShell": {
       "cardMode": "column"
     }
   },

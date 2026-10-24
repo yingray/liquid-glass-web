@@ -56,6 +56,14 @@ for t, _ in THEMES:
                     'fill-strong/fill/glass': over(v('fill-strong', t), G['fill/glass']), 'fill-pressed/surface': over(v('fill-pressed', t), v('surface', t)),
                     'fill-pressed/glass': over(v('fill-pressed', t), G['glass/canvas'])}.items():
         chk(f'{t}: ink on {bgn}', v('ink', t), bg, TXT)
+    # destructive text while hovered or pressed: the state swaps danger for danger-strong (UI-12)
+    for bgn, bg in {'fill-strong/canvas': over(v('fill-strong', t), v('canvas', t)), 'fill-strong/surface': over(v('fill-strong', t), v('surface', t)),
+                    'fill-pressed/canvas': over(v('fill-pressed', t), v('canvas', t)), 'fill-pressed/surface': over(v('fill-pressed', t), v('surface', t)),
+                    'fill-pressed/glass': over(v('fill-pressed', t), G['glass/canvas']), 'fill-strong/fill/glass': over(v('fill-strong', t), G['fill/glass'])}.items():
+        chk(f'{t}: danger-strong on {bgn}', v('danger-strong', t), bg, TXT)
+    # text-field boundary: a required visual cue, so non-text 3:1 against every ground a field sits on (UI-15)
+    for bgn in ['canvas', 'surface', 'surface-inset', 'glass/canvas', 'fill/surface']:
+        chk(f'{t}: field-edge vs {bgn}', v('field-edge', t), G[bgn], 3.0)
     # floating bar over scrolling content: scroll-edge over the opposite extreme, then glass
     W = over(v('glass', t), over(v('scroll-edge', t), opposite))
     for fg in ['ink', 'ink-muted', 'accent-text']:
@@ -96,6 +104,10 @@ for t, _ in THEMES:
             mf = over(v('media-fill', t), mg)
             chk(f'{t}: ink-on-media on media-fill/{zone}/{bn}', v('ink-on-media', t), mf, TXT)
             chk(f'{t}: focus (media, white ring) on media-glass/{zone}/{bn}', '#ffffff', mg, 3.0)
+    # media segmented control while pressed: the selected label turns white on a media-plate thumb over the media-fill track (UI-13)
+    for back, bn in [(WHITE, 'white'), (BLACK, 'black')]:
+        thumb = over(v('media-plate', t), over(v('media-fill', t), back))
+        chk(f'{t}: ink-on-media on pressed media thumb (media-plate/media-fill/{bn})', v('ink-on-media', t), thumb, TXT)
     for back, bn in [(WHITE, 'white'), (BLACK, 'black')]:
         ms = over(v('media-plate', t), back)
         muted = v('ink-on-media-muted', t)
@@ -111,6 +123,10 @@ for t, _ in THEMES:
         for fg in ['ink', 'ink-muted', 'danger']:
             chk(f'{t}: {fg} on fill/glass-thick/{bn} (hover)', v(fg, t), TH, TXT)
         chk(f'{t}: ink on fill-pressed/glass-thick/{bn}', v('ink', t), over(v('fill-pressed', t), T0), TXT)
+        # danger button hover (fill-strong) and danger button or menu item pressed (fill-pressed) inside menus and sheets
+        chk(f'{t}: danger-strong on fill-strong/glass-thick/{bn} (danger hover)', v('danger-strong', t), over(v('fill-strong', t), T0), TXT)
+        chk(f'{t}: danger-strong on fill-pressed/glass-thick/{bn} (danger pressed)', v('danger-strong', t), over(v('fill-pressed', t), T0), TXT)
+        chk(f'{t}: field-edge vs glass-thick/{bn} (field in a sheet)', v('field-edge', t), T0, 3.0)
         chk(f'{t}: ink on fill-strong/fill/glass-thick/{bn} (segmented in sheet)', v('ink', t), over(v('fill-strong', t), over(v('fill', t), T0)), TXT)
         chk(f'{t}: ink-muted on fill/glass-thick/{bn} (segmented track)', v('ink-muted', t), TH, TXT)
         chk(f'{t}: ink-muted on surface-inset (input in sheet)', v('ink-muted', t), v('surface-inset', t), TXT)

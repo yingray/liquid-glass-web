@@ -20,6 +20,7 @@ c("surface-inset", "#1f1e25", "#f0eef4", "Inset surface: inputs, text areas, com
 c("stage", "#09080c", "#09080c", "Background of the media stage (video, images, previews). Dark in every theme; always add data-tone=\"dark\" inside the stage.", DC="#000000", LC="#000000")
 c("line", "#2a2930", "#e3e1e9", "Decorative dividers, progress-bar tracks, dashed add boxes. Carries no meaning (exempt from 3:1); high-contrast themes raise it to ≥ 3:1.", DC="#8a8698", LC="#6e6a7a")
 c("line-outline", "rgba(255, 255, 255, 0.22)", "rgba(22, 20, 28, 0.18)", "1px border for outline buttons.", DC="#b8b4c4", LC="#4a4752")
+c("field-edge", "#7c788a", "#77738a", "1px boundary of text fields (lg-input, lg-textarea). People must see where to type before they focus a field, so it is a required boundary: ≥ 3:1 against canvas, surface, surface-inset, glass and thick glass (WCAG 1.4.11).", DC="#a7a3b3", LC="#5d5969")
 # ---- text
 c("ink", "#eeebf4", "#1a1920", "Primary text and icons. Use on canvas, surface, surface-inset, fill, and glass with a scroll edge (worst case verified ≥ 4.5:1).", DC="#ffffff", LC="#000000")
 c("ink-muted", "#a19dad", "#625e6d", "Secondary text: descriptions, metadata, unselected tabs. Use on all opaque surfaces and glass (same conditions as ink).", DC="#e0dde7", LC="#2e2b36")
@@ -41,6 +42,7 @@ c("warn", "#e8b45c", "#8f5a06", "Needs a decision, missing sources: status dots 
 c("on-warn", "#16141c", "#ffffff", "Text on warn fill (count badges).", DC="#000000", LC="#ffffff")
 c("warn-soft", "rgba(232, 180, 92, 0.14)", "rgba(168, 107, 12, 0.12)", "Soft warn background: callouts for questions and missing items.", DC="rgba(245, 201, 122, 0.22)", LC="rgba(110, 69, 3, 0.12)")
 c("danger", "#f47a75", "#b5242a", "Text for destructive actions (“Delete” in menus, tinted delete buttons). Dark value lightened from the reference's #e9504d and light value darkened to keep 4.5:1 in the menu-hover worst case.", DC="#ffa39f", LC="#8a1419")
+c("danger-strong", "#ffc4c0", "#951a20", "Destructive text on hover and pressed grounds (fill-strong, fill-pressed): danger buttons and menu items while hovered or pressed. danger itself drops to 2.9:1 on those grounds in the dark theme, so the state swaps the text color, not only the ground.", DC="#ffeae9", LC="#600c10")
 c("danger-fill", "#d33a3c", "#d33a3c", "Fill for confirmed destructive actions (press again to delete). The reference's #e8605b with white text is only 3.4:1, so it is darkened.", DC="#ff8a85", LC="#9c1a1f")
 c("on-danger", "#ffffff", "#ffffff", "Text on danger-fill.", DC="#000000", LC="#ffffff")
 c("media-warn", "#f1c77e", "#f1c77e", "Issue markers on the stage (dashed circles, labels).")

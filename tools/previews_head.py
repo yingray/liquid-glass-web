@@ -86,12 +86,13 @@ BASE_CSS = """
 """
 
 
-def page(marker, title, body, css='', script='LiquidGlass.init(document);', lang='en'):
+def page(marker, title, body, css='', script='LiquidGlass.init(document);', lang='en', viewport=False):
+    vp = '\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">' if viewport else ''
     return f"""{marker}
 <!doctype html>
 <html lang="{lang}">
 <head>
-<meta charset="utf-8">
+<meta charset="utf-8">{vp}
 <title>{title}</title>
 <style>{BASE_CSS}{css}</style>
 </head>
@@ -111,7 +112,7 @@ def write(comp, html):
     open(os.path.join(d, 'preview.html'), 'w').write(html)
 
 
-def seg(items, sel=0, label='View', cls='', role='radiogroup', states=None, disabled=(), extra='', badge=None):
+def seg(items, sel=0, label='View', cls='', role='radiogroup', states=None, disabled=(), extra='', badge=None, values=None, controls=None, tasks=None):
     states = states or {}
     irole = 'tab' if role == 'tablist' else 'radio'
     attr = 'aria-selected' if role == 'tablist' else 'aria-checked'
@@ -122,7 +123,13 @@ def seg(items, sel=0, label='View', cls='', role='radiogroup', states=None, disa
             a += f' data-state="{states[i]}"'
         if i in disabled:
             a += ' aria-disabled="true"'
-        b = f'<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn">{badge[1]}</span>' if badge and badge[0] == i else ''
+        if values:
+            a += f' data-value="{values[i]}"'
+        if controls:
+            a += f' id="{controls[i]}-tab" aria-controls="{controls[i]}"'
+        if tasks:
+            a += f' data-task="{tasks[i]}"'
+        b = f'<span class="lg-badge lg-badge--sm lg-badge--count lg-badge--warn" aria-hidden="true">{badge[1]}</span><span class="lg-sr-only">, {badge[1]} pending</span>' if badge and badge[0] == i else ''
         out.append(f'<button class="lg-segmented__item" type="button" role="{irole}"{a}>{t}{b}</button>')
     return (f'<div class="lg-segmented{cls}" role="{role}" aria-label="{label}" data-lg="segmented"{extra}>'
             + ''.join(out) + '<span class="lg-segmented__thumb" aria-hidden="true"></span></div>')

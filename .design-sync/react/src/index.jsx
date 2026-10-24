@@ -13,20 +13,32 @@ function setRef(ref, value) {
 }
 
 // Binds a LiquidGlass controller to the rendered element for the component's lifetime.
-function useController(name, props, forwardedRef) {
+// The controller gets a live view of the latest props: bundle.js reads options at call time, so a new callback or
+// a changed flag (dismissOnBackdrop, beforeClose) applies on the next event without a rebuild. Options that the
+// controller reads only once (initKeys, for example `controlled` or `activation`) rebuild it when they change.
+function useController(name, props, forwardedRef, initKeys = []) {
   const el = useRef(null);
   const ctrl = useRef(null);
   const latest = useRef(props);
   latest.current = props;
+  const live = useRef(null);
+  if (!live.current && typeof Proxy === 'function') {
+    live.current = new Proxy({}, {
+      get: (_, key) => latest.current[key],
+      has: (_, key) => key in latest.current,
+      ownKeys: () => Reflect.ownKeys(latest.current),
+      getOwnPropertyDescriptor: (_, key) => (key in latest.current ? { value: latest.current[key], enumerable: true, configurable: true } : undefined),
+    });
+  }
   useEffect(() => {
     const api = lg();
     if (!el.current || !api || !api[name]) return undefined;
-    ctrl.current = api[name](el.current, latest.current);
+    ctrl.current = api[name](el.current, live.current || latest.current);
     return () => {
       if (ctrl.current && ctrl.current.destroy) ctrl.current.destroy();
       ctrl.current = null;
     };
-  }, [name]);
+  }, [name, ...initKeys.map((k) => props[k])]);
   const ref = (node) => {
     el.current = node;
     setRef(forwardedRef, node);
@@ -40,7 +52,7 @@ const RootContext = createContext(false);
 
 // The outermost root sets the page theme on <html>. A nested root only re-tones its own subtree
 // (light or dark glass), keeping the page's solid or contrast mode, as LiquidGlass.setTone does.
-export function LiquidGlassRoot({ theme = 'dark', transparency, contrast, motion, glass, refraction = true, className, style, children, ...rest }) {
+export function LiquidGlassRoot({ theme = 'dark', transparency, contrast, motion, glass, density, refraction = true, className, style, children, ...rest }) {
   const nested = useContext(RootContext);
   const el = useRef(null);
   useEffect(() => {
@@ -50,11 +62,14 @@ export function LiquidGlassRoot({ theme = 'dark', transparency, contrast, motion
       if (el.current) api.setTone(el.current, theme === 'light' || theme === 'dark' ? theme : null);
       return;
     }
-    api.applyTheme({ scheme: theme, transparency, contrast, motion, glass });
-  }, [nested, theme, transparency, contrast, motion, glass]);
+    api.applyTheme({ scheme: theme, transparency, contrast, motion, glass, density });
+  }, [nested, theme, transparency, contrast, motion, glass, density]);
   useEffect(() => {
     const api = lg();
-    if (api && el.current) api.init(el.current, { refraction });
+    const node = el.current;
+    if (api && node) api.init(node, { refraction });
+    // release every controller bound inside this root when it unmounts or re-inits
+    return () => { if (api && node && api.destroy) api.destroy(node); };
   }, [refraction]);
   return (
     <div
@@ -136,11 +151,11 @@ const BUTTON_VARIANT = {
 };
 
 export const GlassButton = forwardRef(function GlassButton(
-  { variant = 'tinted', size = 'md', icon, iconOnly, thick, chip, block, armed, toggle, defaultPressed, onToggle, disabled, href, type = 'button', className, children, ...rest },
+  { variant = 'tinted', size = 'md', icon, iconOnly, thick, chip, block, armed, toggle, defaultPressed, onToggle, disabled, tooltip, href, type = 'button', className, children, ...rest },
   forwardedRef,
 ) {
   const isToggle = toggle || defaultPressed !== undefined;
-  const [ref] = useController('GlassButton', { toggle: isToggle, onToggle }, forwardedRef);
+  const [ref] = useController('GlassButton', { toggle: isToggle, onToggle }, forwardedRef, ['toggle']);
   const cls = cx(
     'lg-btn',
     BUTTON_VARIANT[variant],
@@ -157,6 +172,7 @@ export const GlassButton = forwardRef(function GlassButton(
     'aria-pressed': isToggle ? String(!!defaultPressed) : undefined,
     'aria-disabled': disabled ? 'true' : undefined,
     'data-armed': armed ? '' : undefined,
+    'data-tooltip': tooltip === true ? '' : tooltip || undefined,
     ...rest,
   };
   const content = (
@@ -175,20 +191,34 @@ function normItem(item) {
   return typeof item === 'string' ? { label: item, value: item } : { value: item.label, ...item };
 }
 
+// index (controlled): a user change is a request. onChange reports it; the control shows the request until the
+// next frame and returns to `index` unless the host commits it by passing the new index. defaultIndex: uncontrolled.
 export const SegmentedControl = forwardRef(function SegmentedControl(
-  { items, index, defaultIndex = 0, onChange, label, mode = 'radio', size = 'md', block, media, disabled, className, ...rest },
+  { items, index, defaultIndex = 0, onChange, onPreview, activation, label, mode = 'radio', size = 'md', block, media, disabled, className, ...rest },
   forwardedRef,
 ) {
   const list = items.map(normItem);
-  const selected = index ?? defaultIndex;
+  const controlled = index != null;
+  const selected = controlled ? index : defaultIndex;
   const linkMode = mode === 'links';
-  const [ref, ctrl] = useController(linkMode ? '__none' : 'SegmentedControl', { onChange: (i, v, item) => onChange && onChange(i, v, item) }, forwardedRef);
+  const [ref, ctrl] = useController(linkMode ? '__none' : 'SegmentedControl', { onChange, onPreview, controlled, activation }, forwardedRef, ['controlled', 'activation']);
+  // controlled: re-assert the committed index after every render, so a declined or delayed change never sticks
   useEffect(() => {
-    if (index != null && ctrl.current && ctrl.current.index !== index) ctrl.current.select(index);
-  }, [index]);
+    if (controlled && ctrl.current && ctrl.current.index !== index) ctrl.current.select(index, { emit: false });
+  });
+  // the controller also refreshes on added or removed items; this covers enabled/disabled changes
+  const itemsKey = list.map((it) => `${it.value}:${it.disabled ? 1 : 0}`).join('|');
+  useEffect(() => {
+    if (ctrl.current && ctrl.current.refresh) ctrl.current.refresh();
+  }, [itemsKey]);
   const cls = cx('lg-segmented', size !== 'md' && `lg-segmented--${size}`, block && 'lg-segmented--block', media && 'lg-segmented--media', className);
   const badge = (it) =>
-    it.badge != null ? <span className={cx('lg-badge lg-badge--sm lg-badge--count', it.badgeWarn && 'lg-badge--warn')}>{it.badge}</span> : null;
+    it.badge != null ? (
+      <>
+        <span className={cx('lg-badge lg-badge--sm lg-badge--count', it.badgeWarn && 'lg-badge--warn')} aria-hidden={it.badgeLabel ? 'true' : undefined}>{it.badge}</span>
+        {it.badgeLabel ? <span className="lg-sr-only">, {it.badgeLabel}</span> : null}
+      </>
+    ) : null;
   if (linkMode) {
     return (
       <nav ref={ref} className={cls} aria-label={label} {...rest}>
@@ -203,12 +233,13 @@ export const SegmentedControl = forwardRef(function SegmentedControl(
   }
   const tabs = mode === 'tabs';
   return (
-    <div ref={ref} className={cls} role={tabs ? 'tablist' : 'radiogroup'} aria-label={label} aria-disabled={disabled ? 'true' : undefined} {...rest}>
+    <div ref={ref} className={cls} role={tabs ? 'tablist' : 'radiogroup'} aria-label={label} aria-disabled={disabled ? 'true' : undefined} data-activation={tabs && activation ? activation : undefined} {...rest}>
       {list.map((it, i) => (
         <button
           key={it.value}
           className="lg-segmented__item"
           type="button"
+          data-value={it.value}
           role={tabs ? 'tab' : 'radio'}
           aria-checked={tabs ? undefined : String(i === selected)}
           aria-selected={tabs ? String(i === selected) : undefined}
@@ -252,9 +283,28 @@ function ToolbarText({ total, className, children, ...rest }) {
   );
 }
 
-function ToolbarScrubber({ value = 0, className, style, ...rest }) {
+// A read-only progress indicator by default. With onChange (or interactive) it is a native range that people can seek with.
+function ToolbarScrubber({ value = 0, interactive, onChange, min = 0, max = 100, step, label = 'Playback position', valueText, className, style, ...rest }) {
+  if (interactive || onChange) {
+    const pct = max > min ? ((value - min) / (max - min)) * 100 : 0;
+    return (
+      <input
+        className={cx('lg-scrub lg-scrub--input', className)}
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        aria-label={label}
+        aria-valuetext={valueText}
+        onChange={(e) => onChange && onChange(Number(e.target.value), e)}
+        style={{ '--lg-value': `${pct}%`, ...style }}
+        {...rest}
+      />
+    );
+  }
   return (
-    <span className={cx('lg-scrub', className)} style={{ '--lg-value': `${value}%`, ...style }} {...rest}>
+    <span className={cx('lg-scrub', className)} role="progressbar" aria-label={label} aria-valuenow={value} aria-valuemin={0} aria-valuemax={100} style={{ '--lg-value': `${value}%`, ...style }} {...rest}>
       <span>
         <span />
       </span>
@@ -268,25 +318,39 @@ function ToolbarSpacer() {
 
 export const Toolbar = Object.assign(ToolbarBase, { Group: ToolbarGroup, Text: ToolbarText, Scrubber: ToolbarScrubber, Spacer: ToolbarSpacer });
 
-export function Composer({ label, placeholder, scope, hint = '⌘K', sendLabel = 'Send', defaultValue = '', onSubmit, flat, className, ...rest }) {
+// kind="assistant" (default) is an instruction field, not a search landmark; kind="search" adds role="search".
+// shortcut="k" binds ⌘K / Ctrl+K and writes the hint; without it no hint shows (`hint` is kept for compatibility
+// and ignored: a hint must name a registered shortcut). status / statusMessage come from the host.
+export function Composer({ label, placeholder, scope, scopeLabel, kind = 'assistant', shortcut, hint, sendLabel = 'Send', defaultValue = '', onSubmit, status = 'idle', statusMessage, flat, className, ...rest }) {
   const [value, setValue] = useState(defaultValue);
   const empty = value.trim() === '';
+  const [ref, ctrl] = useController('Composer', { shortcut: shortcut || null }, null, ['shortcut']);
+  useEffect(() => {
+    if (ctrl.current) ctrl.current.setStatus(status, statusMessage);
+  }, [status, statusMessage, shortcut]);
   return (
     <form
+      ref={ref}
       className={cx('lg-composer lg-glass', flat && 'lg-glass--flat', className)}
-      role="search"
+      role={kind === 'search' ? 'search' : undefined}
       aria-label={label}
       onSubmit={(e) => {
         e.preventDefault();
-        if (!empty && onSubmit) onSubmit(value);
+        if (!empty && status !== 'pending' && onSubmit) onSubmit(value);
       }}
       {...rest}
     >
       <span className="lg-dot lg-dot--lg lg-dot--accent" aria-hidden="true" />
-      {scope ? <span className="lg-badge lg-badge--mono">{scope}</span> : null}
+      {scope ? (
+        <span className="lg-badge lg-badge--mono">
+          {scopeLabel ? <span className="lg-sr-only">Scope: {scopeLabel}, </span> : null}
+          <span aria-hidden={scopeLabel ? 'true' : undefined}>{scope}</span>
+        </span>
+      ) : null}
       <input className="lg-composer__input" type="text" placeholder={placeholder} aria-label={label} value={value} onChange={(e) => setValue(e.target.value)} />
-      {hint ? <span className="lg-composer__hint" aria-hidden="true">{hint}</span> : null}
-      <button className="lg-btn lg-btn--accent" type="submit" disabled={empty}>
+      <span className="lg-composer__hint" aria-hidden="true" />
+      <span className="lg-composer__status" role="status" />
+      <button className="lg-btn lg-btn--accent" type="submit" disabled={empty || status === 'pending'}>
         {sendLabel}
       </button>
     </form>
@@ -360,8 +424,10 @@ const MenuBase = forwardRef(function Menu({ id, label, size = 'md', defaultOpen 
   );
 });
 
-function MenuItem({ icon, danger, href, className, children, ...rest }) {
+// disabled: aria-disabled, so the item stays focusable (people can find it) and the controller blocks every activation
+function MenuItem({ icon, danger, disabled, href, className, children, ...rest }) {
   const cls = cx('lg-menu__item', danger && 'lg-menu__item--danger', className);
+  if (disabled) rest['aria-disabled'] = 'true';
   if (href)
     return (
       <a className={cls} href={href} role="menuitem" {...rest}>
@@ -431,23 +497,21 @@ export function Modal({
   isStatic,
   expanded,
   dismissOnBackdrop = true,
+  beforeClose,
+  presentation = 'sheet',
   className,
   children,
   ...rest
 }) {
   const titleId = useId();
-  const [ref, ctrl, el] = useController(
-    isStatic ? '__none' : 'Modal',
-    { dismissOnBackdrop, onOpen, onClose: (value, dialog) => onClose && onClose(value, dialog) },
-    null,
-  );
+  const [ref, ctrl, el] = useController(isStatic ? '__none' : 'Modal', { dismissOnBackdrop, beforeClose, onOpen, onClose }, null);
   useEffect(() => {
     const d = el.current;
     if (isStatic || !ctrl.current || !d) return;
     if (open && !d.open) ctrl.current.open(document.activeElement instanceof HTMLElement ? document.activeElement : undefined);
     if (!open && d.open) ctrl.current.close();
   }, [open, isStatic]);
-  const cls = cx('lg-modal', compact && 'lg-modal--compact', full && 'lg-modal--full', isStatic && 'lg-modal--static', className);
+  const cls = cx('lg-modal', compact && 'lg-modal--compact', full && 'lg-modal--full', presentation === 'center' && 'lg-modal--center', isStatic && 'lg-modal--static', className);
   const inner = (
     <>
       <span className="lg-modal__grabber" aria-hidden="true" />
@@ -562,7 +626,9 @@ export const TabBar = forwardRef(function TabBar({ tabs, current = 0, search, se
 
 /* ---------- Stage ---------- */
 
-export const Stage = forwardRef(function Stage({ media, top, bottom, noScrim, tone = 'dark', className, children, ...rest }, forwardedRef) {
+// fit: "contain" (default, the whole frame) or "cover" (a crop). scrim: "auto" (bands only where top/bottom hold
+// controls), "top", "bottom", "both" or "none". inspect: hide controls and scrims; exitLabel names the one way back.
+export const Stage = forwardRef(function Stage({ media, alt, fit = 'contain', top, bottom, noScrim, scrim = 'auto', inspect, onExitInspect, exitLabel = 'Show Controls', tone = 'dark', className, children, ...rest }, forwardedRef) {
   const el = useRef(null);
   useEffect(() => {
     const api = lg();
@@ -574,14 +640,22 @@ export const Stage = forwardRef(function Stage({ media, top, bottom, noScrim, to
         el.current = n;
         setRef(forwardedRef, n);
       }}
-      className={cx('lg-stage', noScrim && 'lg-stage--no-scrim', className)}
+      className={cx('lg-stage', className)}
       data-tone={tone}
+      data-fit={fit === 'cover' ? 'cover' : undefined}
+      data-scrim={noScrim ? 'none' : scrim !== 'auto' ? scrim : undefined}
+      data-inspect={inspect ? '' : undefined}
       {...rest}
     >
-      {media ? <div className="lg-stage__media" style={{ backgroundImage: media }} /> : null}
+      {media ? <div className="lg-stage__media" style={{ backgroundImage: media }} role={alt ? 'img' : undefined} aria-label={alt} /> : null}
       {top ? <div className="lg-stage__top">{top}</div> : null}
       {children}
       {bottom ? <div className="lg-stage__bottom">{bottom}</div> : null}
+      {inspect ? (
+        <button className="lg-stage__exit lg-btn lg-glass lg-glass--media" type="button" onClick={onExitInspect}>
+          {exitLabel}
+        </button>
+      ) : null}
     </div>
   );
 });
@@ -620,10 +694,19 @@ export function StatusDot({ status = 'neutral', size, pulse, label, className, .
 
 const THUMB_SIZE = { lg: null, md: 'lg-row__thumb--md', sm: 'lg-row__thumb--sm' };
 
-export function ListRow({ thumb, thumbSize = 'lg', title, badge, subtitle, meta, chevron, selected, isStatic, className, children, ...rest }) {
-  const As = isStatic ? 'div' : 'button';
+const SelectListContext = createContext(false);
+
+// Inside SelectList a row is an option (role="option", aria-selected). Elsewhere a row is a button:
+// `current` marks the item shown elsewhere (aria-current), `pressed` a toggle (aria-pressed). `selected` outside a
+// SelectList maps to aria-current, because aria-selected is only valid on options, tabs and grid cells.
+export function ListRow({ thumb, thumbSize = 'lg', title, badge, subtitle, meta, chevron, selected, current, pressed, value, isStatic, className, children, ...rest }) {
+  const inList = useContext(SelectListContext);
+  const As = isStatic || inList ? 'div' : 'button';
+  const state = inList
+    ? { role: 'option', 'aria-selected': String(!!selected), 'data-value': value }
+    : { type: isStatic ? undefined : 'button', 'aria-current': current || selected ? 'true' : undefined, 'aria-pressed': pressed != null ? String(!!pressed) : undefined };
   return (
-    <As className={cx('lg-row', isStatic && 'lg-row--static', className)} type={isStatic ? undefined : 'button'} aria-selected={selected ? 'true' : undefined} {...rest}>
+    <As className={cx('lg-row', isStatic && 'lg-row--static', className)} {...state} {...rest}>
       {thumb ? (
         typeof thumb === 'string' ? (
           <span className={cx('lg-row__thumb', THUMB_SIZE[thumbSize])} style={{ backgroundImage: thumb }} />
@@ -644,6 +727,16 @@ export function ListRow({ thumb, thumbSize = 'lg', title, badge, subtitle, meta,
     </As>
   );
 }
+
+// A list people choose rows from: role="listbox". Single selection follows focus; `multiple` toggles with Space.
+export const SelectList = forwardRef(function SelectList({ label, multiple, onChange, className, children, ...rest }, forwardedRef) {
+  const [ref] = useController('SelectList', { onChange }, forwardedRef);
+  return (
+    <div ref={ref} className={cx('lg-list', className)} role="listbox" aria-label={label} aria-multiselectable={multiple ? 'true' : undefined} {...rest}>
+      <SelectListContext.Provider value={true}>{children}</SelectListContext.Provider>
+    </div>
+  );
+});
 
 export function Callout({ variant = 'suggestion', size, eyebrow, title, actions, className, children, ...rest }) {
   return (
@@ -673,23 +766,47 @@ export function ProgressBar({ value = 0, size, neutral, label, className, style,
   );
 }
 
-export const TextField = forwardRef(function TextField({ multiline, error, className, rows = 2, ...rest }, ref) {
-  const errId = useId();
+// helper and error are both linked with aria-describedby, after any ids the host passes; error sets aria-invalid.
+export const TextField = forwardRef(function TextField({ multiline, error, helper, className, rows = 2, 'aria-describedby': describedBy, 'aria-invalid': ariaInvalid, ...rest }, ref) {
+  const id = useId();
+  const helpId = `${id}-help`;
+  const errId = `${id}-err`;
+  const ids = [...new Set([...(describedBy ? String(describedBy).split(/\s+/) : []), helper ? helpId : null, error ? errId : null].filter(Boolean))].join(' ') || undefined;
+  const a11y = { 'aria-invalid': error ? 'true' : ariaInvalid, 'aria-describedby': ids };
   const field = multiline ? (
-    <textarea ref={ref} className={cx('lg-textarea', className)} rows={rows} aria-invalid={error ? 'true' : undefined} aria-describedby={error ? errId : undefined} {...rest} />
+    <textarea ref={ref} className={cx('lg-textarea', className)} rows={rows} {...rest} {...a11y} />
   ) : (
-    <input ref={ref} className={cx('lg-input', className)} type="text" aria-invalid={error ? 'true' : undefined} aria-describedby={error ? errId : undefined} {...rest} />
+    <input ref={ref} className={cx('lg-input', className)} type="text" {...rest} {...a11y} />
   );
-  if (!error) return field;
+  if (!error && !helper) return field;
   return (
     <>
       {field}
-      <span id={errId} className="footnote" style={{ color: 'var(--danger)' }}>
-        {error}
-      </span>
+      {helper ? <span id={helpId} className="lg-field__help">{helper}</span> : null}
+      {error ? <span id={errId} className="lg-field__error">{error}</span> : null}
     </>
   );
 });
+
+/* ---------- AppShell: the fluid page layout ---------- */
+
+// navbar and tabbar render outside the grid; aside, children (main) and inspector fill it. The grid follows the
+// space the app has: three columns ≥ 1100, inspector below main 744–1099, one column (aside as a dock) < 744.
+export function AppShell({ navbar, tabbar, aside, asideLabel, inspector, contained, className, children, ...rest }) {
+  return (
+    <div className={cx('lg-app', contained && 'lg-app--contained', className)} {...rest}>
+      {navbar}
+      <div className="lg-app__body">
+        <div className="lg-app__grid">
+          {aside ? <aside className="lg-app__aside" aria-label={asideLabel}>{aside}</aside> : null}
+          <main className="lg-app__main">{children}</main>
+          {inspector ? <div className="lg-app__inspector">{inspector}</div> : null}
+        </div>
+      </div>
+      {tabbar}
+    </div>
+  );
+}
 
 function ChipBase({ pressed, defaultPressed, onPressedChange, className, children, onClick, ...rest }) {
   const [own, setOwn] = useState(!!defaultPressed);
