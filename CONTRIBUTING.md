@@ -29,7 +29,7 @@ Never hand-edit `tokens.json` or a `preview.html`; the next `make build` overwri
    - **Behaviour contracts** (`tools/contracts.py`, 99 checks): each check names the audit item (UI-xx) or the topic (SCROLL) that it guards. They cover the operating contracts that the cards cannot show: keyboard, cancel, disabled, dynamic items, overlays, lifecycle, hit areas and layout geometry.
 3. Every behaviour change adds or updates a contract in `tools/contracts.py`, tagged with its UI-xx item. For a confirmed bug, write the failing test first, then fix the code.
 4. If you change the React adapter, run `python3 tools/react_contracts.py` (16 checks; it skips when `.ds-sync/node_modules` is missing).
-5. Look at the screenshots (`make shots`) in all six themes for anything you touched.
+5. Look at the screenshots (`make shots`) in all six themes for anything you touched. To check on a phone, run `make serve` and reach it through Tailscale (`tailscale serve --bg --https=8810 http://127.0.0.1:8810`); never publish a local server to the internet.
 6. If the change affects how the system meets an Apple recommendation, update `design-system/5-apple-alignment.md` (status and evidence). Claim only what a check proves. Device and assistive-technology checks are still pending, so say so where a claim depends on them.
 7. If the change cites Apple guidance, or touches a component that the guidance covers, do the HIG change log check below first.
 
@@ -68,6 +68,10 @@ The full set of principles and rule tiers is in [`design-system/0-principles.md`
 ## Copy
 
 English, following `tools/glossary-en.md`: Title Case for buttons, menu items, tabs and headers; sentence case for descriptions and messages; never all caps.
+
+## The demo site
+
+The Pages workflow publishes the demo from `main` after each push: https://yingray.github.io/liquid-glass-web/. It shows only what is merged. Use `make serve` to see work that is not merged yet. Record checks on real devices that use the demo in `docs/ui-ux-audit-tracking.md`, with the device, browser and result.
 
 ## Publishing to Claude Design
 

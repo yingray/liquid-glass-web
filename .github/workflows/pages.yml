@@ -1,0 +1,43 @@
+# Builds the demo site (tools/site.py) from main and publishes it to GitHub Pages.
+# The build needs only the Python standard library. The browser checks (make check) are not part of this workflow.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build tokens, previews and the site
+        run: make site PY=python
+      - name: Fail if generated files differ from the sources
+        run: git diff --exit-code -- design-system/tokens.json design-system/components
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
