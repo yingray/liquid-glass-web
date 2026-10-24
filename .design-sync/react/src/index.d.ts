@@ -64,7 +64,7 @@ export type GlassButtonVariant =
   | 'media'
   | 'media-solid';
 
-export interface GlassButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'> {
+export interface GlassButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type' | 'onToggle'> {
   /** Default "tinted". See the component description for when to use each variant. */
   variant?: GlassButtonVariant;
   /** xs 26, sm 32, md 36 (default), lg 44 (primary confirmation), nav 42 (standalone glass next to the navbar). */
@@ -108,26 +108,25 @@ export interface GlassButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLBu
  */
 export declare const GlassButton: React.ForwardRefExoticComponent<GlassButtonProps & React.RefAttributes<HTMLElement>>;
 
-export interface SegmentedItem {
-  label: React.ReactNode;
-  /** Stable identity: React key, data-value, and the value passed to onChange. Defaults to label when label is a
-      string. Set it whenever the label is translated or carries a badge. */
-  value?: string;
-  /** mode="links" only. */
-  href?: string;
-  /** Count badge after the label (neutral). */
-  badge?: React.ReactNode;
-  /** Use the warn badge only for counts that need the user's attention. */
-  badgeWarn?: boolean;
-  /** Screen-reader text for the badge ("3 pending"); the number itself is then hidden from assistive tech. */
-  badgeLabel?: string;
-  disabled?: boolean;
-  /** mode="tabs": id of the tabpanel this tab controls. */
-  controls?: string;
-}
 export interface SegmentedControlProps {
-  /** 2 to 5 options (at most 4 on mobile), one or two words each. */
-  items: Array<string | SegmentedItem>;
+  /** 2 to 5 options (at most 4 on mobile), one or two words each. Set `value` when a label is translated or badged. */
+  items: Array<string | {
+    label: React.ReactNode;
+    /** Stable identity: React key, data-value, and the value passed to onChange. Defaults to label when label is a
+        string. Set it whenever the label is translated or carries a badge. */
+    value?: string;
+    /** mode="links" only. */
+    href?: string;
+    /** Count badge after the label (neutral). */
+    badge?: React.ReactNode;
+    /** Use the warn badge only for counts that need the user's attention. */
+    badgeWarn?: boolean;
+    /** Screen-reader text for the badge ("3 pending"); the number itself is then hidden from assistive tech. */
+    badgeLabel?: string;
+    disabled?: boolean;
+    /** mode="tabs": id of the tabpanel this tab controls. */
+    controls?: string;
+  }>;
   /** Controlled selected index. A user change is a request: onChange reports it, and the control returns to
       `index` on the next frame unless the host passes the new index. */
   index?: number;
@@ -153,6 +152,7 @@ export interface SegmentedControlProps {
   disabled?: boolean;
   className?: string;
 }
+export type SegmentedItem = Exclude<SegmentedControlProps['items'][number], string>;
 /**
  * A switch for 2-5 mutually exclusive options. The thumb can be clicked, dragged or moved with arrow keys,
  * and turns into glass while pressed. Not for long labels or something that is really a toggle.
@@ -257,11 +257,11 @@ export interface GlassPanelProps extends React.HTMLAttributes<HTMLElement> {
   material?: 'flat' | 'thick';
   /** Left rail placement. */
   rail?: boolean;
-  /** Element type. Default "aside". */
-  as?: keyof JSX.IntrinsicElements;
+  /** Element type. Default "aside"; "section" or "div" inside a page, "nav" for a navigation rail. */
+  as?: 'aside' | 'section' | 'div' | 'nav';
   children?: React.ReactNode;
 }
-export interface PanelSectionProps extends React.HTMLAttributes<HTMLElement> {
+export interface PanelSectionProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
   /** Section heading (h3), Title Case. */
   title?: React.ReactNode;
   /** Count shown after the heading. */
@@ -396,11 +396,6 @@ export interface ModalProps extends Omit<React.DialogHTMLAttributes<HTMLDialogEl
  */
 export declare const Modal: React.FC<ModalProps>;
 
-export interface NavLink {
-  label: React.ReactNode;
-  href?: string;
-  value?: string;
-}
 export interface FloatingNavbarProps extends React.HTMLAttributes<HTMLElement> {
   /** Logo (currentColor) + brand name. */
   brand: React.ReactNode;
@@ -408,7 +403,7 @@ export interface FloatingNavbarProps extends React.HTMLAttributes<HTMLElement> {
   /** aria-label of the brand link ("Lumen home"). */
   brandLabel?: string;
   /** The main destinations, at most 5. Desktop: links in the brand island. Mobile: render the same list in a TabBar. */
-  links?: Array<string | NavLink>;
+  links?: Array<string | { label: React.ReactNode; href?: string; value?: string }>;
   /** Index of the current destination. Default 0. */
   currentLink?: number;
   /** Context island (desktop only): project name, neutral ProgressBar, count. Optional parts: lg-nav-optional. */
@@ -432,6 +427,7 @@ export interface FloatingNavbarProps extends React.HTMLAttributes<HTMLElement> {
   /** Pin the scrolled state (scroll edge shown) for static mockups. */
   scrolled?: boolean;
 }
+export type NavLink = Exclude<NonNullable<FloatingNavbarProps['links']>[number], string>;
 /**
  * The main navigation: separate glass islands in a fixed order: brand + destinations, context, project tabs,
  * the accent action on its own, then tools at the far right. Container queries hide lg-nav-optional below
@@ -444,15 +440,14 @@ export interface FloatingNavbarProps extends React.HTMLAttributes<HTMLElement> {
  */
 export declare const FloatingNavbar: React.ForwardRefExoticComponent<FloatingNavbarProps & React.RefAttributes<HTMLElement>>;
 
-export interface TabBarTab {
-  label: React.ReactNode;
-  /** 20px icon (Icon size="lg"). */
-  icon: React.ReactNode;
-  href?: string;
-}
 export interface TabBarProps extends React.HTMLAttributes<HTMLElement> {
   /** 2 to 5 tabs, the same destinations and order as FloatingNavbar links. One-word labels. */
-  tabs: TabBarTab[];
+  tabs: Array<{
+    label: React.ReactNode;
+    /** 20px icon (Icon size="lg"). */
+    icon: React.ReactNode;
+    href?: string;
+  }>;
   /** Index of the current tab. Default 0. */
   current?: number;
   /** Round search button at the far right. Omit when the page has a Composer or search field at the bottom. */
@@ -466,6 +461,7 @@ export interface TabBarProps extends React.HTMLAttributes<HTMLElement> {
   contained?: boolean;
   label?: string;
 }
+export type TabBarTab = TabBarProps['tabs'][number];
 /**
  * The mobile tab bar floating at the bottom (below 744px only). Reserve tabbar-height + 24px at the page bottom.
  * @example
@@ -533,7 +529,7 @@ export interface StatusDotProps extends React.HTMLAttributes<HTMLSpanElement> {
 /** Status dot, always paired with text. */
 export declare const StatusDot: React.FC<StatusDotProps>;
 
-export interface ListRowProps extends React.HTMLAttributes<HTMLElement> {
+export interface ListRowProps extends Omit<React.HTMLAttributes<HTMLElement>, 'title'> {
   /** CSS background-image string for the thumbnail, or a custom element. */
   thumb?: string | React.ReactNode;
   /** lg 76×46 (default), md 68×40, sm 48×30. */
@@ -576,7 +572,7 @@ export interface SelectListProps extends Omit<React.HTMLAttributes<HTMLDivElemen
  */
 export declare const SelectList: React.ForwardRefExoticComponent<SelectListProps & React.RefAttributes<HTMLDivElement>>;
 
-export interface CalloutProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface CalloutProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /** suggestion (accent-soft, default) or warn (a question that needs a decision). */
   variant?: 'suggestion' | 'warn';
   size?: 'md' | 'lg';

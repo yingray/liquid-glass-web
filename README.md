@@ -41,7 +41,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 **Demo site:** `.github/workflows/pages.yml` builds `make site` on every push to `main` and publishes `_site/` to GitHub Pages. It also fails when `tokens.json` or a `preview.html` differs from what the sources produce.
 
-**CI:** a GitHub Actions workflow is ready at `tools/ci/check.yml`: it runs `make build` (generated files must be committed) and `make check` on every pull request. To turn it on, copy it to `.github/workflows/check.yml` (it is kept outside that folder because the tool that created this repository may not write workflow files).
+**CI:** `.github/workflows/check.yml` runs on every pull request and every push to `main`. It fails when `make build` changes a generated file, then runs `make check`, builds the React adapter and runs its contracts (a skip counts as a failure in CI). All browser checks run in headless Chromium.
 
 ## Claude Design
 

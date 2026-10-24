@@ -108,7 +108,7 @@ The contract tests were written before the fixes. A rerun of `tools/contracts.py
 | ID | Status | Change | Test | Open |
 | --- | --- | --- | --- | --- |
 | UI-47 | Fixed | Rule tiers and waivers in `audit.py`; menu icons consistent per group; `5-apple-alignment.md` evidence | `make audit` | — |
-| UI-48 | Fixed, partial | `make test` runs 99 contract checks. React checks added. Audit covers dark and light | All checks above | WebKit and Firefox runs; device performance; `tools/ci/check.yml` is still a template, not an active GitHub workflow |
+| UI-48 | Fixed, partial | `make test` runs 99 contract checks. React checks added. Audit covers dark and light | All checks above | WebKit and Firefox runs; device performance. `make check` and the React contracts now run in GitHub Actions (`.github/workflows/check.yml`) |
 | UI-49 | Needs repro | Hard Content card: long German and zh-Hant names, RTL, a corner chart | Screenshots | Real photos, white documents and video under the glass |
 | UI-50 | Fixed, partial | v1 scope and host responsibilities in `0-principles.md`. Field and listbox examples in Patterns | — | A full settings form and a search results page as reference screens |
 
